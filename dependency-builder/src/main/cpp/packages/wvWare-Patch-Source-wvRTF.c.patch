@@ -1,0 +1,11 @@
+--- wvRTF.c	2019-12-21 05:22:19.220000000 -0000
++++ wvRTF.c	2019-12-21 05:22:38.997000000 -0000
+@@ -192,7 +192,7 @@
+     rtf_output_char ('{');
+ 
+     /* font color */
+-    rtf_output (rtfColors[ud->cCol]);
++    rtf_output ("%s", rtfColors[ud->cCol]);
+ 
+     /* font face */
+     rtf_output ("\\f%d", ud->cFont);

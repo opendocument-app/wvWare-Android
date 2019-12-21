@@ -1,0 +1,2 @@
+include ":dependency-builder"
+rootProject.name = "wvWare-android"
