@@ -1,8 +1,6 @@
-diff --git GNUmakefile.am GNUmakefile.am
-index 173bd3d..5f487e7 100644
 --- GNUmakefile.am
 +++ GNUmakefile.am
-@@ -2,7 +2,10 @@ DIST_SUBDIRS = xml help wingdingfont patterns
+@@ -2,7 +2,7 @@ DIST_SUBDIRS = xml help wingdingfont patterns
  
  SUBDIRS = xml help wingdingfont patterns .
  
@@ -11,8 +9,6 @@ index 173bd3d..5f487e7 100644
 
  INCLUDES = -I. -I$(top_builddir) -I$(srcdir) 
  
-diff --git wvConvert.c wvConvert.c
-index 16859ab..8cff0a2 100644
 --- wvConvert.c
 +++ wvConvert.c
 @@ -31,6 +31,40 @@
@@ -108,8 +104,6 @@ index 16859ab..8cff0a2 100644
  	  tmp = fopen (config, "rb");
        }
      myhandle->path = config;
-diff --git wvWare.c wvWare.c
-index f8062a4..9e24519 100644
 --- wvWare.c
 +++ wvWare.c
 @@ -29,6 +29,40 @@

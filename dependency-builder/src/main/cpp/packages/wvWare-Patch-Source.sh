@@ -6,7 +6,7 @@ BASEDIR=$(dirname "$THIS_FILE")
 
 patch $1/wvRTF.c $BASEDIR/wvWare-Patch-Source-wvRTF.c.patch
 
-patch -p1 <$BASEDIR/wvWare-Patch-Source-android.patch
+patch -p0 <$BASEDIR/wvWare-Patch-Source-android.patch
 
 rm $1/config.sub
 
