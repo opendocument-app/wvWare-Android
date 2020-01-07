@@ -1,0 +1,215 @@
+diff --git GNUmakefile.am GNUmakefile.am
+index 173bd3d..5f487e7 100644
+--- GNUmakefile.am
++++ GNUmakefile.am
+@@ -2,7 +2,10 @@ DIST_SUBDIRS = xml help wingdingfont patterns
+ 
+ SUBDIRS = xml help wingdingfont patterns .
+ 
+-DEFS = @DEFS@ -DVERSION=\"@VERSION@\" -DXMLCONFIG=\"$(pkgdatadir)/wvConfig.xml\" -DHTMLCONFIG=\"$(pkgdatadir)/wvHtml.xml\" -DWVDATADIR=\"$(datadir)/wv\"
++DEFS = @DEFS@ -DVERSION=\"@VERSION@\"
+
+ INCLUDES = -I. -I$(top_builddir) -I$(srcdir) 
+ 
+diff --git wvConvert.c wvConvert.c
+index 16859ab..8cff0a2 100644
+--- wvConvert.c
++++ wvConvert.c
+@@ -31,6 +31,40 @@
+ #include "wv.h"
+ #include "getopt.h"
+ 
++const char * s_tmpfile_path_template = "/data/local/tmp/tmpfile-XXXXXX";
++
++const char * s_XMLCONFIG;
++const char * s_HTMLCONFIG;
++const char * s_WVDATADIR;
++
++FILE *tmpfile() {
++  FILE * handle = NULL;
++  char * path = strdup(s_tmpfile_path_template);
++
++  int descriptor = mkstemp(&path[0]);
++  if (-1 != descriptor) {
++    handle = fdopen(descriptor, "w+b");
++    if (NULL == handle) {
++      close(descriptor);
++    }
++
++    // File already open,
++    // can be unbound from the file system
++    remove(path);
++  }
++  return handle;
++}
++
++char * strdup_and_append(const char * a, const char * b) {
++  const size_t szA = strlen(a);
++  const size_t szB = strlen(b);
++  char * buf = malloc(szA + szB + 1);
++  strcpy(buf, a);
++  strcpy(buf + szA, b);
++  buf[szA + szB] = '\0';
++  return buf;
++}
++
+ /*
+ Released under GPL, written by Caolan.McNamara@ul.ie.
+ 
+@@ -58,7 +92,7 @@ void
+ usage (void)
+ {
+     printf
+-	("Usage: wvConvert [--config config.xml] [--password password] filename.doc\n");
++	("Usage: wvConvert [--config config.xml] [--password password] --tmpfiledir dir --assetdir dir filename.doc\n");
+     exit (-1);
+ }
+ 
+@@ -76,6 +110,8 @@ main (int argc, char **argv)
+     static struct option long_options[] = {
+ 	{"config", 1, 0, 'x'},
+ 	{"password", 1, 0, 'p'},
++  {"tmpfiledir", 1, 0, 't'},
++  {"assetdir", 1, 0, 'A'},
+ 	{0, 0, 0, 0}
+     };
+ 
+@@ -101,6 +137,22 @@ main (int argc, char **argv)
+ 		else
+ 		    wvError (("No password given to password option"));
+ 		break;
++      case 't':
++        if (optarg) {
++          s_tmpfile_path_template = strdup_and_append(optarg, "/tmpfile-XXXXXX");
++          wvTrace (("s_tmpfile_path_template = '%s'", s_tmpfile_path_template));
++        } else
++          wvError (("No argument given to tmpfiledir"));
++        break;
++      case 'A':
++        if (optarg) {
++          s_WVDATADIR = strdup(optarg);
++          s_XMLCONFIG = strdup_and_append(optarg, "/wvConfig.xml");
++          s_HTMLCONFIG = strdup_and_append(optarg, "/wvHtml.xml");
++        } else
++          wvError (("No argument given to assetdir"));
++        break;
++
+ 	    default:
+ 		usage ();
+ 		break;
+@@ -294,8 +346,8 @@ wvOpenConfig (state_data *myhandle,char *config)
+ 	  if (i)
+ 	      wvError (
+ 		       ("Attempt to open %s failed, using %s\n", config,
+-			HTMLCONFIG));
+-	  config = XMLCONFIG;
++             s_HTMLCONFIG));
++	  config = s_XMLCONFIG;
+ 	  tmp = fopen (config, "rb");
+       }
+     myhandle->path = config;
+diff --git wvWare.c wvWare.c
+index f8062a4..9e24519 100644
+--- wvWare.c
++++ wvWare.c
+@@ -29,6 +29,40 @@
+ #include "wv.h"
+ #include "getopt.h"
+ 
++const char * s_tmpfile_path_template = "/data/local/tmp/tmpfile-XXXXXX";
++
++const char * s_XMLCONFIG;
++const char * s_HTMLCONFIG;
++const char * s_WVDATADIR;
++
++FILE *tmpfile() {
++	FILE * handle = NULL;
++	char * path = strdup(s_tmpfile_path_template);
++
++	int descriptor = mkstemp(&path[0]);
++	if (-1 != descriptor) {
++		handle = fdopen(descriptor, "w+b");
++		if (NULL == handle) {
++			close(descriptor);
++		}
++
++		// File already open,
++		// can be unbound from the file system
++		remove(path);
++	}
++	return handle;
++}
++
++char * strdup_and_append(const char * a, const char * b) {
++  const size_t szA = strlen(a);
++  const size_t szB = strlen(b);
++  char * buf = malloc(szA + szB + 1);
++  strcpy(buf, a);
++  strcpy(buf + szA, b);
++  buf[szA + szB] = '\0';
++  return buf;
++}
++
+ /* strdup isn't declared in <string.h> for `gcc -ansi'; declare it here */
+ extern char *strdup (const char *);
+ 
+@@ -273,6 +307,8 @@ do_help (void)
+     printf ("  -s --suppress=fmt\t\tDon't convert fmt to eps\n");
+     printf ("  -X --xml\t\t\tXML output\n");
+     printf ("  -1 --nographics\t\tno 0x01 graphics output\n");
++    printf ("  --tmpfiledir\t\tDirectory for tmpfiles\n");
++    printf ("  --assetdir\t\twvWare asset directory (wvHtml.xml)\n");
+     printf ("  -v --version\t\t\tPrint wvWare's version number\n");
+     printf ("  -? --help\t\t\tPrint this help message\n");
+     printf
+@@ -315,6 +351,8 @@ main (int argc, char **argv)
+ 	{"help", 0, 0, '?'},
+ 	{"xml", 0, 0, 'X'},
+ 	{"nographics", 0, 0, '1'},
++	{"tmpfiledir", 1, 0, 't'},
++	{"assetdir", 1, 0, 'A'},
+ 	{0, 0, 0, 0}
+     };
+ 
+@@ -342,6 +380,21 @@ main (int argc, char **argv)
+ 		    charset = optarg;
+ 		else
+ 		    wvError (("No argument given to charset"));
++		break;
++			case 't':
++				if (optarg) {
++          s_tmpfile_path_template = strdup_and_append(optarg, "/tmpfile-XXXXXX");
++          wvTrace (("s_tmpfile_path_template = '%s'", s_tmpfile_path_template));
++        } else
++					wvError (("No argument given to tmpfiledir"));
++		break;
++			case 'A':
++				if (optarg) {
++					s_WVDATADIR = strdup(optarg);
++          s_XMLCONFIG = strdup_and_append(optarg, "/wvConfig.xml");
++					s_HTMLCONFIG = strdup_and_append(optarg, "/wvHtml.xml");
++				} else
++					wvError (("No argument given to assetdir"));
+ 		break;
+ 	    case 'x':
+ 		if (optarg)
+@@ -1618,7 +1671,7 @@ wvOpenConfig (state_data *myhandle,char *config)
+ 
+     if(tmp == NULL)
+     {
+-	str_copy  (buf, sizeof(buf), WVDATADIR);
++	str_copy  (buf, sizeof(buf), s_WVDATADIR);
+ 	str_append(buf, sizeof(buf), "/");
+ 	str_append(buf, sizeof(buf), config);
+ 	config = buf;
+@@ -1630,8 +1683,8 @@ wvOpenConfig (state_data *myhandle,char *config)
+ 	  if (i)
+ 	      wvError (
+ 		       ("Attempt to open %s failed, using %s\n", config,
+-			HTMLCONFIG));
+-	  config = HTMLCONFIG;
++			s_HTMLCONFIG));
++	  config = s_HTMLCONFIG;
+ 	  tmp = fopen (config, "rb");
+       }
+     myhandle->path = config;
