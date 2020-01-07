@@ -42,6 +42,7 @@ android {
         version "3.10.2"
     }
     ndkVersion "20.1.5948944"
+    sourceSets.main.assets.srcDirs = [ "${buildDir}/assets/" ]
 }
 
 // Issue #1 (from pdf2htmlEX-Android)
@@ -110,6 +111,23 @@ task collectReleaseAssetsFromShareFolder {
             duplicatesStrategy('exclude')
         }
     }
+
+    doLast {
+        new File("$buildDir/installed/MinSizeRel").eachDir() {
+            String abi = it.getName()
+            File srcDir = new File("$it/bin")
+
+//            File jniLibsFolder = new File("$projectDir/src/main/jniLibs/$abi")
+            File jniLibsFolder = new File("$buildDir/assets/$abi")
+            jniLibsFolder.mkdirs()
+
+            copy {
+                from("$srcDir/wvWare")
+                into(jniLibsFolder)
+                rename('wvWare', 'wvWare.exe.not.so')
+            }
+        }
+    }
 }
 
 task collectDebugAssetsFromShareFolder {
@@ -122,6 +140,22 @@ task collectDebugAssetsFromShareFolder {
                 into("$buildDir/assets")
             }
             duplicatesStrategy('exclude')
+        }
+    }
+    doLast {
+        new File("$buildDir/installed/Debug").eachDir() {
+            String abi = it.getName()
+            File srcDir = new File("$it/bin")
+
+//            File jniLibsFolder = new File("$projectDir/src/main/jniLibs/$abi")
+            File jniLibsFolder = new File("$buildDir/assets/$abi")
+            jniLibsFolder.mkdirs()
+
+            copy {
+                from("$srcDir/wvWare")
+                into(jniLibsFolder)
+                rename('wvWare', 'wvWare-Debug.exe.not.so')
+            }
         }
     }
 }
