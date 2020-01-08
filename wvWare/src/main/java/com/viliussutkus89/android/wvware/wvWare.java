@@ -64,9 +64,8 @@ public final class wvWare {
     File dataDir = new File(filesDir, "wv");
 
     AssetExtractor ae = new AssetExtractor();
-    if (!dataDir.exists()) {
-      ae.setNoOverwrite().extract(ctx.getAssets(), filesDir, "wv");
-    }
+    ae.setNoOverwrite().extract(ctx.getAssets(), filesDir, "wv");
+
     this.m_dataDir = dataDir.getAbsolutePath();
 
     File tmpDir = new File(cacheDir, "wvWare-tmp");
