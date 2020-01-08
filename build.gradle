@@ -19,11 +19,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-
-        // @TODO: AssetExtractor not yet in JCenter
-        maven {
-            url  "https://dl.bintray.com/viliussutkus89/maven-repo"
-        }
     }
 }
 
