@@ -1,2 +1,2 @@
-include ":dependency-builder"
-rootProject.name = "wvWare-android"
+include ":dependency-builder", ":wvWare"
+rootProject.name = "wvware-android"
