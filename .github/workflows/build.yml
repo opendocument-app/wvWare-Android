@@ -8,7 +8,7 @@ env:
   TARBALL_CACHE_KEY:  "tarballs-key-1"
 
 jobs:
-  debug:
+  build:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
