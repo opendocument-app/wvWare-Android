@@ -36,6 +36,7 @@ android {
         archivesBaseName = rootProject.name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        sourceSets.main.assets.srcDirs = [ "${projectDir}/../dependency-builder/build/assets/" ]
     }
 }
 
@@ -147,7 +148,7 @@ publishing{
 }
 
 dependencies {
-    implementation project(":dependency-builder")
+    compileOnly project(":dependency-builder")
     implementation 'androidx.annotation:annotation:1.1.0'
 
     implementation 'com.viliussutkus89:assetextractor-android:1.1.2'
