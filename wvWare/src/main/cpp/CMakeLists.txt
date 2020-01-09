@@ -39,6 +39,7 @@ link_directories(${wvWare_LIBRARY_DIRS})
 
 add_library(wvware-android SHARED wvWare-Android.cpp
         CCharGC.h
+        wvWare.c
         )
 
 target_include_directories(wvware-android PRIVATE ${wvWare_INCLUDE_DIRS})
