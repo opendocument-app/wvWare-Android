@@ -28,6 +28,7 @@ import com.viliussutkus89.android.assetextractor.AssetExtractor;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -105,13 +106,13 @@ public final class wvWare {
     return this;
   }
 
-  public File convertToHTML() throws ConversionFailedException {
+  public File convertToHTML() throws ConversionFailedException, FileNotFoundException {
     if (null == this.p_inputDOC) {
       throw new ConversionFailedException("No Input DOC given!");
     }
 
     if (!this.p_inputDOC.exists()) {
-      throw new ConversionFailedException("Input DOC does not exist!");
+      throw new FileNotFoundException();
     }
 
     String inputFilenameNoDOCExt = this.p_inputDOC.getName();
