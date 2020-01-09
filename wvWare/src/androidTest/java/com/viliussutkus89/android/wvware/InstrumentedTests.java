@@ -49,7 +49,7 @@ public class InstrumentedTests {
     Context ctx = instrumentation.getContext();
 
     File outputDir = new File(appContext.getCacheDir(), "DOCs-extracted-from-assets");
-    File file = new AssetExtractor().setOverwrite().extract(ctx.getAssets(), outputDir, filename);
+    File file = new AssetExtractor(ctx.getAssets()).setOverwrite().extract(outputDir, filename);
     assertNotNull("Failed to extract DOC", file);
     return file;
   }

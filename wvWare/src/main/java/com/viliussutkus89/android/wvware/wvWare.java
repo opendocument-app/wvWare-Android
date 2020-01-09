@@ -63,8 +63,8 @@ public final class wvWare {
 
     File dataDir = new File(filesDir, "wv");
 
-    AssetExtractor ae = new AssetExtractor();
-    ae.setNoOverwrite().extract(ctx.getAssets(), filesDir, "wv");
+    AssetExtractor ae = new AssetExtractor(ctx.getAssets());
+    ae.setNoOverwrite().extract(filesDir, "wv");
 
     this.m_dataDir = dataDir.getAbsolutePath();
 
@@ -79,7 +79,7 @@ public final class wvWare {
 
     // @TODO: outputDir may not be available
     File outputDir = new File("/data/local/tmp");
-    File wvWareExe = ae.setOverwrite().extract(ctx.getAssets(), outputDir, getAbi() + "/" + exeName);
+    File wvWareExe = ae.setOverwrite().extract(outputDir, getAbi() + "/" + exeName);
 
     this.m_wvWareExe =  wvWareExe.getAbsolutePath();
   }

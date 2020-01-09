@@ -151,7 +151,7 @@ dependencies {
     compileOnly project(":dependency-builder")
     implementation 'androidx.annotation:annotation:1.1.0'
 
-    implementation 'com.viliussutkus89:assetextractor-android:1.1.2'
+    implementation 'com.viliussutkus89:assetextractor-android:1.2.0'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
