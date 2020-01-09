@@ -19,30 +19,20 @@
 package com.viliussutkus89.android.wvware;
 
 import android.content.Context;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 
 import com.viliussutkus89.android.assetextractor.AssetExtractor;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public final class wvWare {
+  static {
+    System.loadLibrary("wvware-android");
+  }
 
-  private String m_wvWareExe;
-
-  private String m_tmpDir;
-  private String m_dataDir;
-  private File m_outputHtmlsDir;
+  private File m_outputDir;
 
   private File p_inputDOC;
 
@@ -59,41 +49,11 @@ public final class wvWare {
   }
 
   private synchronized void init(@NonNull Context ctx) {
-    File filesDir = ctx.getFilesDir();
-    File cacheDir = ctx.getCacheDir();
+    AssetExtractor ae = new AssetExtractor(ctx.getAssets()).setNoOverwrite();
+    setDataDir(ae.extract(ctx.getFilesDir(), "wv").getAbsolutePath());
 
-    File dataDir = new File(filesDir, "wv");
-
-    AssetExtractor ae = new AssetExtractor(ctx.getAssets());
-    ae.setNoOverwrite().extract(filesDir, "wv");
-
-    this.m_dataDir = dataDir.getAbsolutePath();
-
-    File tmpDir = new File(cacheDir, "wvWare-tmp");
-    tmpDir.mkdir();
-    this.m_tmpDir = tmpDir.getAbsolutePath();
-
-    this.m_outputHtmlsDir = new File(this.m_tmpDir, "output-htmls");
-    this.m_outputHtmlsDir.mkdir();
-
-    String exeName = BuildConfig.DEBUG ? "wvWare-Debug.exe.not.so" : "wvWare.exe.not.so";
-
-    // @TODO: outputDir may not be available
-    File outputDir = new File("/data/local/tmp");
-    File wvWareExe = ae.setOverwrite().extract(outputDir, getAbi() + "/" + exeName);
-
-    this.m_wvWareExe =  wvWareExe.getAbsolutePath();
-  }
-
-  private String getAbi() {
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-      // on newer Android versions, we'll return only the most important Abi version
-      return Build.SUPPORTED_ABIS[0];
-    }
-    else {
-      // on pre-Lollip versions, we got only one Abi
-      return Build.CPU_ABI;
-    }
+    this.m_outputDir = new File(ctx.getCacheDir(), "wvWare");
+    this.m_outputDir.mkdir();
   }
 
   public wvWare setInputDOC(@NonNull File inputDOC) {
@@ -120,56 +80,25 @@ public final class wvWare {
       inputFilenameNoDOCExt = inputFilenameNoDOCExt.substring(0, inputFilenameNoDOCExt.length() - 4);
     }
 
-    File outputHtmlDir = new File(m_outputHtmlsDir, inputFilenameNoDOCExt);
-    for (int i = 0; !outputHtmlDir.mkdir(); i++) {
-      outputHtmlDir = new File(m_outputHtmlsDir, inputFilenameNoDOCExt + "-" + i);
-    }
-    File outputHtml = new File(outputHtmlDir, inputFilenameNoDOCExt + ".html");
-    File conversionLog = new File(outputHtmlDir, inputFilenameNoDOCExt + ".log");
-
-    ArrayList<String> args = new ArrayList<>(Arrays.asList(
-      this.m_wvWareExe,
-      "-x", "wvHtml.xml",
-      "--tmpfiledir", this.m_tmpDir,
-      "--assetdir", this.m_dataDir,
-      "-d", outputHtmlDir.getAbsolutePath(),
-      this.p_inputDOC.getAbsolutePath()
-    ));
-
-    if (!this.p_password.isEmpty()) {
-      args.add("-p");
-      args.add(this.p_password);
+    File outputDir = new File(this.m_outputDir, inputFilenameNoDOCExt);
+    for (int i = 0; !outputDir.mkdir(); i++) {
+      outputDir = new File(this.m_outputDir, inputFilenameNoDOCExt + "-" + i);
     }
 
-    int retVal;
-    try {
-      Process process = new ProcessBuilder(args).start();
-      inputStreamToFile(process.getInputStream(), outputHtml);
-      inputStreamToFile(process.getErrorStream(), conversionLog);
-      retVal = process.waitFor();
-    } catch (IOException | InterruptedException e) {
-      e.printStackTrace();
-      retVal = -1;
-    }
-
+    File outputFile = new File(outputDir, "output.html");
+    int retVal = _convertToHTML(this.p_inputDOC.getAbsolutePath(), outputDir.getAbsolutePath(), this.p_password);
     if (0 != retVal) {
-      outputHtml.delete();
+      outputFile.delete();
       throw new ConversionFailedException("Conversion failed. Return value from wvWare: " + retVal);
     }
 
-    return outputHtml;
+    File outputFilePreferredName = new File(outputDir, inputFilenameNoDOCExt + ".html");
+    outputFile.renameTo(outputFilePreferredName);
+
+    return outputFilePreferredName;
   }
 
-  private void inputStreamToFile(InputStream input, File output) throws IOException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(input));
-    BufferedWriter bw = new BufferedWriter(new FileWriter(output));
+  private native void setDataDir(String dataDir);
 
-    String line;
-    while (null != (line = br.readLine())) {
-      bw.write(line);
-    }
-    bw.close();
-    br.close();
-  }
-
+  private native int _convertToHTML(String inputFile, String outputDir, String password);
 }
