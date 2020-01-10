@@ -23,9 +23,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven {
-            url  "https://dl.bintray.com/viliussutkus89/maven-repo"
-        }
     }
 }
 
