@@ -66,8 +66,8 @@ public final class wvWare {
     return this;
   }
 
-  public wvWare setNoForking(@NonNull boolean iDoUnderstandThatStdoutMayNotWorkAfterThisAndImOkayWithThis) throws IllegalArgumentException {
-    if (!iDoUnderstandThatStdoutMayNotWorkAfterThisAndImOkayWithThis) {
+  public wvWare setNoForking(@NonNull boolean redirectStdoutToDevNullAfterConversion) throws IllegalArgumentException {
+    if (!redirectStdoutToDevNullAfterConversion) {
       throw new IllegalArgumentException();
     }
     setNoForking();

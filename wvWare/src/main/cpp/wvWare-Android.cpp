@@ -118,12 +118,7 @@ Java_com_viliussutkus89_android_wvware_wvWare__1convertToHTML(JNIEnv *env, jobje
     if (forkBeforeConverting) {
       exit(retVal);
     } else {
-      fclose(stdout);
-#if __ANDROID_API__ >= __ANDROID_API_M__
-      stdout = fdopen(STDOUT_FILENO, "w");
-#else
-      __sF[1] = *fdopen(STDOUT_FILENO, "w");
-#endif
+      freopen("/dev/null", "w", stdout);
     }
   }
 
