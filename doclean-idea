@@ -21,3 +21,4 @@ function rm_file_if_exists() {
 rm_folder_if_exists .idea
 rm_file_if_exists wvWare-Android.iml
 rm_file_if_exists dependency-builder/dependency-builder.iml
+rm_file_if_exists wvWare/wvWare.iml
