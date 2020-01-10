@@ -1,17 +1,21 @@
 #!/bin/sh
 set -eu
 
+proj=wvWare
+projId=wvware-android
+
+
 THIS_FILE=$(readlink -f "$0")
 BASEDIR=$(dirname "$THIS_FILE")
 
 # Extract project version from build.gradle
 version_format='([0-9\.]+)'
 expression="s/^version \= ['\"]$version_format['\"]\$/\1/p"
-VERSION=$(sed -En "--expression=$expression" $BASEDIR/wvWare/build.gradle)
+VERSION=$(sed -En "--expression=$expression" $BASEDIR/$proj/build.gradle)
 RELEASEDVERSION=$VERSION
 
 expression="s/^\s*versionCode ([0-9]+)\$/\1/p"
-VERSIONCODE=$(sed -En "--expression=$expression" $BASEDIR/wvWare/build.gradle)
+VERSIONCODE=$(sed -En "--expression=$expression" $BASEDIR/$proj/build.gradle)
 RELEASEDVERSIONCODE=$VERSIONCODE
 VERSIONCODE=$((VERSIONCODE + 1))
 
@@ -53,11 +57,28 @@ echo "Released versionCode = $RELEASEDVERSIONCODE"
 echo "New versionName = $VERSION"
 echo "New versionCode = $VERSIONCODE"
 
+
+# Library version is incremented
+# Sample app is updated to pre increment version, which matches released version
+
 # Update library's versionName
 version_format='([0-9\.]+)'
 expression="s/^version \= ['\"]$version_format['\"]\$/version \= '$VERSION'/"
-sed -E "--expression=$expression" -i $BASEDIR/wvWare/build.gradle
+sed -E "--expression=$expression" -i $BASEDIR/$proj/build.gradle
 
 # Update library's versionCode
 expression="s/versionCode ([0-9]+)\$/versionCode $VERSIONCODE/"
-sed -E "--expression=$expression" -i $BASEDIR/wvWare/build.gradle
+sed -E "--expression=$expression" -i $BASEDIR/$proj/build.gradle
+
+# Update version in sample app's dependency list
+expression="s/implementation 'com.viliussutkus89:$projId:$version_format'/implementation 'com.viliussutkus89:$projId:$RELEASEDVERSION'/"
+sed -E "--expression=$expression" -i $BASEDIR/android-sample-app/app/build.gradle
+
+# Update sample app's versionName
+expression="s/versionName ['\"]$version_format['\"]\$/versionName '$RELEASEDVERSION'/"
+sed -E "--expression=$expression" -i $BASEDIR/android-sample-app/app/build.gradle
+
+# Update sample app's versionCode
+expression="s/versionCode ([0-9]+)\$/versionCode $RELEASEDVERSIONCODE/"
+sed -E "--expression=$expression" -i $BASEDIR/android-sample-app/app/build.gradle
+

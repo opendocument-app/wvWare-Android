@@ -68,7 +68,7 @@ jobs:
           java-version: 1.8
 
       - run: |
-          cd android-sample-app
+          cd sample-app
           ./gradlew assembleDebug
 
       - name: Upload app-universal-debug.apk
@@ -77,7 +77,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: android-sample-app/app/build/outputs/apk/debug/app-universal-debug.apk
+          asset_path: sample-app/app/build/outputs/apk/debug/app-universal-debug.apk
           asset_name: app-universal-debug.apk
           asset_content_type: application/zip
 
@@ -87,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: android-sample-app/app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+          asset_path: sample-app/app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
           asset_name: app-arm64-v8a-debug.apk
           asset_content_type: application/zip
 
@@ -97,7 +97,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: android-sample-app/app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk
+          asset_path: sample-app/app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk
           asset_name: app-armeabi-v7a-debug.apk
           asset_content_type: application/zip
 
@@ -107,7 +107,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: android-sample-app/app/build/outputs/apk/debug/app-x86-debug.apk
+          asset_path: sample-app/app/build/outputs/apk/debug/app-x86-debug.apk
           asset_name: app-x86-debug.apk
           asset_content_type: application/zip
 
@@ -117,7 +117,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: android-sample-app/app/build/outputs/apk/debug/app-x86_64-debug.apk
+          asset_path: sample-app/app/build/outputs/apk/debug/app-x86_64-debug.apk
           asset_name: app-x86_64-debug.apk
           asset_content_type: application/zip
 

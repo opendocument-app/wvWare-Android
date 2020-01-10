@@ -180,6 +180,17 @@ jobs:
       - name: Build wvWare-Android
         run: ./gradlew build -PdisablePreDex
 
+      - name: Publish to maven local
+        run: ./gradlew publishToMavenLocal
+
+      - name: Prepare sample app
+        run: .github/prepareSampleAppForUnpublishedLib.sh
+
+      - name: Build sample app from unpublished library
+        run: |
+          cd sample-app
+          ./gradlew build
+
       - name: Get version
         id: get_version
         run: echo "::set-output name=version::$(./getVersion.sh)"
