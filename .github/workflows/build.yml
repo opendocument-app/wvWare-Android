@@ -38,8 +38,8 @@ jobs:
 
       - run: ./dodownloadtarballs --serial
 
-      - name: Build wvWare-Android
-        run: ./gradlew assemble${{ matrix.buildType }} -PdisablePreDex -Pabi=${{ matrix.abi }}
+      - name: Build dependencies of wvWare-Android
+        run: ./gradlew dependency-builder:assemble${{ matrix.buildType }} -PdisablePreDex -Pabi=${{ matrix.abi }}
 
       - name: Gather licenses
         if: matrix.abi == 'armeabi-v7a' && matrix.buildType == 'Release'
