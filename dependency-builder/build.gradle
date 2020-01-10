@@ -72,10 +72,12 @@ task gatherLicenses {
                         // LGPL2.1 and GPLv2 licenses include form feed (page break) characters.
                         // XML does not take kindly to form feed characters.
                         if ((depName =="wvWare") ||
+                            (depName == "freetype" && licenseFilename == "docs/GPLv2.TXT") ||
                             (depName == "glib-2.0" && licenseFilename == "COPYING") ||
                             (depName == "iconv" && licenseFilename == "COPYING.LIB") ||
                             (depName == "intl" && licenseFilename == "COPYING") ||
-                            (depName =="libgsf")) {
+                            (depName == "libwmf") ||
+                            (depName == "libgsf")) {
                             urlVal.append(licenseText.replace("\u000C", ""))
                         } else {
                             urlVal.append(licenseText)
@@ -86,11 +88,14 @@ task gatherLicenses {
                 }
             }
             addLicense("wvWare", ["COPYING"])
+            addLicense("freetype", ["docs/LICENSE.TXT", "docs/GPLv2.TXT", "docs/FTL.TXT"])
             addLicense("glib-2.0", ["COPYING"])
             addLicense("iconv", ["README", "COPYING", "COPYING.LIB"])
             addLicense("intl", ["COPYING"])
             addLicense("libffi", ["LICENSE"])
             addLicense("libgsf", ["COPYING", "COPYING.LIB"])
+            addLicense("libpng", ["LICENSE"])
+            addLicense("libwmf", ["COPYING"])
             addLicense("libxml-2.0", ["Copyright"])
         }
     }
