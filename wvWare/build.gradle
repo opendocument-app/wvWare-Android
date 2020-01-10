@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-version = '1.2.0'
+version = '1.2.1'
 group = 'com.viliussutkus89'
 
 apply plugin: 'com.android.library'
@@ -30,7 +30,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
 
-        versionCode 16
+        versionCode 17
         versionName project.version
 
         archivesBaseName = rootProject.name
