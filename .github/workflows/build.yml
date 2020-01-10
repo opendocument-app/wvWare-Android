@@ -156,14 +156,14 @@ jobs:
 
       - name: chmod +x pkg-config's
         run: |
-        chmod +x dependency-builder/build/installed/MinSizeRel/x86/bin/pkg-config
-        chmod +x dependency-builder/build/installed/MinSizeRel/x86_64/bin/pkg-config
-        chmod +x dependency-builder/build/installed/MinSizeRel/armeabi-v7a/bin/pkg-config
-        chmod +x dependency-builder/build/installed/MinSizeRel/arm64-v8a/bin/pkg-config
-        chmod +x dependency-builder/build/installed/Debug/x86/bin/pkg-config
-        chmod +x dependency-builder/build/installed/Debug/x86_64/bin/pkg-config
-        chmod +x dependency-builder/build/installed/Debug/armeabi-v7a/bin/pkg-config
-        chmod +x dependency-builder/build/installed/Debug/arm64-v8a/bin/pkg-config
+          chmod +x dependency-builder/build/installed/MinSizeRel/x86/bin/pkg-config
+          chmod +x dependency-builder/build/installed/MinSizeRel/x86_64/bin/pkg-config
+          chmod +x dependency-builder/build/installed/MinSizeRel/armeabi-v7a/bin/pkg-config
+          chmod +x dependency-builder/build/installed/MinSizeRel/arm64-v8a/bin/pkg-config
+          chmod +x dependency-builder/build/installed/Debug/x86/bin/pkg-config
+          chmod +x dependency-builder/build/installed/Debug/x86_64/bin/pkg-config
+          chmod +x dependency-builder/build/installed/Debug/armeabi-v7a/bin/pkg-config
+          chmod +x dependency-builder/build/installed/Debug/arm64-v8a/bin/pkg-config
 
       - name: Download artifacted assets
         uses: actions/download-artifact@v1
