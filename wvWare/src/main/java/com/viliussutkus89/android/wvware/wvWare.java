@@ -66,6 +66,14 @@ public final class wvWare {
     return this;
   }
 
+  public wvWare setNoForking(@NonNull boolean iDoUnderstandThatStdoutMayNotWorkAfterThisAndImOkayWithThis) throws IllegalArgumentException {
+    if (!iDoUnderstandThatStdoutMayNotWorkAfterThisAndImOkayWithThis) {
+      throw new IllegalArgumentException();
+    }
+    setNoForking();
+    return this;
+  }
+
   public File convertToHTML() throws ConversionFailedException, FileNotFoundException {
     if (null == this.p_inputDOC) {
       throw new ConversionFailedException("No Input DOC given!");
@@ -85,20 +93,19 @@ public final class wvWare {
       outputDir = new File(this.m_outputDir, inputFilenameNoDOCExt + "-" + i);
     }
 
-    File outputFile = new File(outputDir, "output.html");
-    int retVal = _convertToHTML(this.p_inputDOC.getAbsolutePath(), outputDir.getAbsolutePath(), this.p_password);
+    File outputFile = new File(outputDir, inputFilenameNoDOCExt + ".html");
+    int retVal = _convertToHTML(this.p_inputDOC.getAbsolutePath(), outputDir.getAbsolutePath(), outputFile.getAbsolutePath(), this.p_password);
     if (0 != retVal) {
       outputFile.delete();
       throw new ConversionFailedException("Conversion failed. Return value from wvWare: " + retVal);
     }
 
-    File outputFilePreferredName = new File(outputDir, inputFilenameNoDOCExt + ".html");
-    outputFile.renameTo(outputFilePreferredName);
-
-    return outputFilePreferredName;
+    return outputFile;
   }
 
   private native void setDataDir(String dataDir);
 
-  private native int _convertToHTML(String inputFile, String outputDir, String password);
+  private native int _convertToHTML(String inputFile, String outputDir, String outputFile, String password);
+
+  private native void setNoForking();
 }

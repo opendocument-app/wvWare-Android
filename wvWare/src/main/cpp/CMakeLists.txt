@@ -37,9 +37,11 @@ pkg_search_module(wvWare REQUIRED wv-1.0)
 
 link_directories(${wvWare_LIBRARY_DIRS})
 
+add_definitions(-DHAVE_CONFIG_H)
 add_library(wvware-android SHARED wvWare-Android.cpp
         CCharGC.h
         wvWare.c
+        errorPrinter.h
         )
 
 target_include_directories(wvware-android PRIVATE ${wvWare_INCLUDE_DIRS})

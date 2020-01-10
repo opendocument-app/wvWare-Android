@@ -44,3 +44,24 @@ public:
     }
 };
 
+class CharGC {
+private:
+    char * cstr;
+
+public:
+    CharGC(JNIEnv *env, jstring input) {
+      const char * const_cstr = env->GetStringUTFChars(input, nullptr);
+      cstr = strdup(const_cstr);
+      env->ReleaseStringUTFChars(input, const_cstr);
+    }
+
+    char * c_str() {
+      return this->cstr;
+    }
+
+    bool isEmpty() const { return this->cstr[0] == '\0'; }
+
+    ~CharGC() {
+      free(this->cstr);
+    }
+};

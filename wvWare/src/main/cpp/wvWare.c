@@ -28,12 +28,18 @@
 #include <unistd.h>
 #include "wv.h"
 #include "getopt.h"
+#include "errorPrinter.h"
 
 /* strdup isn't declared in <string.h> for `gcc -ansi'; declare it here */
 extern char *strdup (const char *);
 
 extern char *str_copy(char *d, size_t n, char *s);
 extern char *str_append(char *d, size_t n, char *s);
+
+extern char * s_WVDATADIR;
+extern char * s_HTMLCONFIG;
+
+extern char * strdup_and_append_twice(const char * a, const char * b, const char * c);
 
 /*
 Released under GPL, written by Caolan.McNamara@ul.ie.
@@ -290,8 +296,9 @@ do_help (void)
 static void wv_query_eps (const char* format);
 static void wv_suppress (const char* format);
 
-char *charset = NULL;
+char *charset = "utf-8";
 
+#if 0
 int
 main (int argc, char **argv)
 {
@@ -498,6 +505,107 @@ main (int argc, char **argv)
     wvShutdown ();
 
     return (ret);
+}
+#endif
+
+int convert(char *inputFile, char *outputDir, const char *password) {
+  int ret;
+  state_data myhandle;
+  expand_data expandhandle;
+  wvParseStruct ps;
+
+  config = "wvHtml.xml";
+
+  getcwd (wv_cwd,4096);
+  wv_cwd[4096] = 0;
+
+  wvInit ();
+  ret = wvInitParser (&ps, inputFile);
+  ps.dir = outputDir;
+
+  if (ret & 0x8000)		/* Password protected? */
+  {
+    if ((ret & 0x7fff) == WORD8)
+    {
+      ret = 0;
+      if (password == NULL || password[0] == '\0')
+      {
+        fprintf (stderr,
+                 "Password required, this is an encrypted document\n");
+        return (-1);
+      }
+      else
+      {
+        wvSetPassword (password, &ps);
+        if (wvDecrypt97 (&ps))
+        {
+          wvError (("Incorrect Password\n"));
+          return (-1);
+        }
+      }
+    }
+    else if (((ret & 0x7fff) == WORD7) || ((ret & 0x7fff) == WORD6))
+    {
+      ret = 0;
+      if (password == NULL || password[0] == '\0')
+      {
+        fprintf (stderr,
+                 "Password required, this is an encrypted document\n");
+        return (-1);
+      }
+      else
+      {
+        wvSetPassword (password, &ps);
+        if (wvDecrypt95 (&ps))
+        {
+          wvError (("Incorrect Password\n"));
+          return (-1);
+        }
+      }
+    }
+  }
+
+  if (ret)
+  {
+    wvError (("startup error #%d\n", ret));
+    wvOLEFree (&ps);
+    return (-1);
+  }
+
+  wvSetElementHandler (&ps, myelehandler);
+  wvSetDocumentHandler (&ps, mydochandler);
+  wvSetCharHandler (&ps, myCharProc);
+  wvSetSpecialCharHandler (&ps, mySpecCharProc);
+
+  wvInitStateData (&myhandle);
+
+  if (wvOpenConfig (&myhandle,config) == 0)
+  {
+    wvError (("config file not found\n"));
+    return (-1);
+  }
+  else
+  {
+    wvTrace (("x for FILE is %x\n", myhandle.fp));
+    ret = wvParseConfig (&myhandle);
+  }
+
+  if (!ret)
+  {
+    expandhandle.sd = &myhandle;
+    ps.userData = &expandhandle;
+    ret = wvHtml (&ps);
+  }
+  wvReleaseStateData (&myhandle);
+
+  if (ret == 2)
+    return (2);
+  else if (ret != 0)
+    ret = -1;
+  wvOLEFree (&ps);
+  wvShutdown ();
+
+  return (ret);
 }
 
 int
@@ -1607,7 +1715,6 @@ myCharProc (wvParseStruct * ps, U16 eachchar, U8 chartype, U16 lid)
 int
 wvOpenConfig (state_data *myhandle,char *config)
 {
-    static char buf[BUFSIZ] = "";
     FILE *tmp;
     int i = 0;
     if (config == NULL)
@@ -1618,9 +1725,11 @@ wvOpenConfig (state_data *myhandle,char *config)
 
     if(tmp == NULL)
     {
-	str_copy  (buf, sizeof(buf), WVDATADIR);
-	str_append(buf, sizeof(buf), "/");
-	str_append(buf, sizeof(buf), config);
+        static char * buf = NULL;
+        if (NULL != buf) {
+          free(buf);
+        }
+	      buf = strdup_and_append_twice(s_WVDATADIR, "/", config);
 	config = buf;
 	tmp = fopen(config, "rb");
     }
@@ -1630,8 +1739,8 @@ wvOpenConfig (state_data *myhandle,char *config)
 	  if (i)
 	      wvError (
 		       ("Attempt to open %s failed, using %s\n", config,
-			HTMLCONFIG));
-	  config = HTMLCONFIG;
+			s_HTMLCONFIG));
+	  config = s_HTMLCONFIG;
 	  tmp = fopen (config, "rb");
       }
     myhandle->path = config;
