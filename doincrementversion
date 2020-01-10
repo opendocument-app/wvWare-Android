@@ -72,13 +72,13 @@ sed -E "--expression=$expression" -i $BASEDIR/$proj/build.gradle
 
 # Update version in sample app's dependency list
 expression="s/implementation 'com.viliussutkus89:$projId:$version_format'/implementation 'com.viliussutkus89:$projId:$RELEASEDVERSION'/"
-sed -E "--expression=$expression" -i $BASEDIR/android-sample-app/app/build.gradle
+sed -E "--expression=$expression" -i $BASEDIR/sample-app/app/build.gradle
 
 # Update sample app's versionName
 expression="s/versionName ['\"]$version_format['\"]\$/versionName '$RELEASEDVERSION'/"
-sed -E "--expression=$expression" -i $BASEDIR/android-sample-app/app/build.gradle
+sed -E "--expression=$expression" -i $BASEDIR/sample-app/app/build.gradle
 
 # Update sample app's versionCode
 expression="s/versionCode ([0-9]+)\$/versionCode $RELEASEDVERSIONCODE/"
-sed -E "--expression=$expression" -i $BASEDIR/android-sample-app/app/build.gradle
+sed -E "--expression=$expression" -i $BASEDIR/sample-app/app/build.gradle
 
