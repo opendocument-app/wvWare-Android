@@ -24,4 +24,6 @@ rm_folder_if_exists build
 rm_folder_if_exists dependency-builder/.cxx
 rm_folder_if_exists dependency-builder/build
 
+rm_folder_if_exists wvWare/.cxx
+rm_folder_if_exists wvWare/build
 
