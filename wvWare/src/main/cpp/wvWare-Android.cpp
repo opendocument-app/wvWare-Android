@@ -16,15 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cstdarg>
 #include <cstdlib>
 #include <cstring>
-#include <unistd.h>
-#include <sys/wait.h>
 #include <android/log.h>
 #include <jni.h>
 #include "CCharGC.h"
 
-static bool forkBeforeConverting = true;
+static FILE * g_htmlOutputFileHandle = nullptr;
 
 extern "C" {
 
@@ -71,9 +70,17 @@ Java_com_viliussutkus89_android_wvware_wvWare_setDataDir(JNIEnv *env, jobject, j
   s_HTMLCONFIG = strdup_and_append(dataDir.c_str(), "/wvHtml.xml");
 }
 
-JNIEXPORT void JNICALL
-Java_com_viliussutkus89_android_wvware_wvWare_setNoForking(JNIEnv *env, jobject) {
-  forkBeforeConverting = false;
+int printfRedirect(const char *fmt, ...) {
+  int retVal = 0;
+  if (nullptr != g_htmlOutputFileHandle) {
+    std::va_list args;
+    va_start(args, fmt);
+    retVal = vfprintf(g_htmlOutputFileHandle, fmt, args);
+    va_end(args);
+  } else {
+    __android_log_print(ANDROID_LOG_ERROR, "wvWare-Android", "Output file handle unset!");
+  }
+  return retVal;
 }
 
 JNIEXPORT jint JNICALL
@@ -87,40 +94,12 @@ Java_com_viliussutkus89_android_wvware_wvWare__1convertToHTML(JNIEnv *env, jobje
   CCharGC outputFile(env, output_file);
   CCharGC password(env, password_);
 
-  int retVal = 1;
+  g_htmlOutputFileHandle = fopen(outputFile.c_str(), "w");
 
-  // Forking is needed because I don't want to redirect stdout of the whole app
-  pid_t pid = 0;
-  if (forkBeforeConverting) {
-    pid = fork();
-    if (0 < pid) {
-      int waitStatus;
-      waitpid(pid, &waitStatus, 0);
-      if (WIFEXITED(waitStatus)) {
-        retVal = WEXITSTATUS(waitStatus);
-      } else {
-        retVal = 4;
-      }
-    } else if (-1 == pid) {
-      __android_log_print(ANDROID_LOG_ERROR, "wvWare-Android", "Failed to fork!");
-      return 3;
-    }
-  }
+  int retVal = convert(inputFile.c_str(), outputDir.c_str(), password.c_str());
 
-  if (0 == pid) {
-    // wvWare prints the html to stdout
-    // wvHtml is a shell script that pipes wvWare output to file
-    // Would prefer to write to file directly,
-    freopen(outputFile.c_str(), "w+", stdout);
-
-    retVal = convert(inputFile.c_str(), outputDir.c_str(), password.c_str());
-
-    if (forkBeforeConverting) {
-      exit(retVal);
-    } else {
-      freopen("/dev/null", "w", stdout);
-    }
-  }
+  fclose(g_htmlOutputFileHandle);
+  g_htmlOutputFileHandle = nullptr;
 
   return retVal;
 }

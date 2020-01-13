@@ -66,11 +66,11 @@ public final class wvWare {
     return this;
   }
 
-  public wvWare setNoForking(@NonNull boolean redirectStdoutToDevNullAfterConversion) throws IllegalArgumentException {
-    if (!redirectStdoutToDevNullAfterConversion) {
-      throw new IllegalArgumentException();
-    }
-    setNoForking();
+  /*
+   * @deprecated wvWare-Android doesn't fork anymore
+   */
+  @Deprecated
+  public wvWare setNoForking(@NonNull boolean deprecated) {
     return this;
   }
 
@@ -106,6 +106,4 @@ public final class wvWare {
   private native void setDataDir(String dataDir);
 
   private native int _convertToHTML(String inputFile, String outputDir, String outputFile, String password);
-
-  private native void setNoForking();
 }
