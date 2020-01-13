@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
