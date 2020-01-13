@@ -66,7 +66,7 @@ public class InstrumentedTests {
       wv.setInputDOC(docFile);
       try {
         htmlFile = wv.convertToHTML();
-      } catch (wvWare.ConversionFailedException e) {
+      } catch (wvWare.ConversionFailedException | FileNotFoundException e) {
         docFile.delete();
         e.printStackTrace();
         fail("Failed to convert DOC to HTML: " + i);
