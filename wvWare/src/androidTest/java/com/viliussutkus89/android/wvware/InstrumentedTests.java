@@ -42,7 +42,8 @@ public class InstrumentedTests {
 
   // Files must be placed in androidTest/assets/
   private final String[] m_DOCsToTest = new String[] {
-    "sample.doc"
+    "sample.doc",
+    "Tom Taschauer.doc"
   };
 
   private File extractAssetDOC(String filename) {
@@ -58,28 +59,21 @@ public class InstrumentedTests {
 
   @Test
   public void testAllSuppliedDOCs() {
-    Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
-
+    wvWare converter = new wvWare(InstrumentationRegistry.getInstrumentation().getTargetContext());
     for (String i: m_DOCsToTest) {
       File docFile = extractAssetDOC(i);
-      File htmlFile;
-
-      wvWare wv = new wvWare(ctx);
-      wv.setInputDOC(docFile);
+      converter.setInputDOC(docFile);
       try {
-        htmlFile = wv.convertToHTML();
+        File htmlFile = converter.convertToHTML();
+        assertTrue("Converted HTML file not found! " + i, htmlFile.exists());
+        assertTrue("Converted HTML file empty! " + i, htmlFile.length() > 0);
+        htmlFile.delete();
       } catch (wvWare.ConversionFailedException | IOException e) {
-        docFile.delete();
         e.printStackTrace();
         fail("Failed to convert DOC to HTML: " + i);
-        continue;
+      } finally {
+        docFile.delete();
       }
-
-      docFile.delete();
-      assertTrue("Converted HTML file not found! " + i, htmlFile.exists());
-      assertTrue("Converted HTML file empty! " + i, htmlFile.length() > 0);
-
-      htmlFile.delete();
     }
   }
 
