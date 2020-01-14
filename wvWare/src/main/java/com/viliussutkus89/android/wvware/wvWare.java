@@ -93,10 +93,24 @@ public final class wvWare {
 
     if (0 != retVal) {
       outputFile.delete();
+      removeFileOrDirectoryRecursively(imagesDir);
       throw new ConversionFailedException("Return value from wvWare: " + retVal);
     }
 
+    // Clean up extracted images from cache
+    removeFileOrDirectoryRecursively(imagesDir);
+
     return outputFile;
+  }
+
+  private void removeFileOrDirectoryRecursively(File node) {
+    String[] subNodes = node.list();
+    if (null != subNodes) {
+      for (String subNode: subNodes) {
+        removeFileOrDirectoryRecursively(new File(node, subNode));
+      }
+    }
+    node.delete();
   }
 
   private String removeExtensionFromFilename() {
