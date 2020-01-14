@@ -71,7 +71,7 @@ public final class wvWare {
    * @deprecated wvWare-Android doesn't fork anymore
    */
   @Deprecated
-  public wvWare setNoForking(@NonNull boolean deprecated) {
+  public wvWare setNoForking(boolean thisArgumentIsIgnored) {
     return this;
   }
 
