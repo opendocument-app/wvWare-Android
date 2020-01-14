@@ -19,6 +19,7 @@
 package com.viliussutkus89.android.wvware;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -32,6 +33,8 @@ public final class wvWare {
   static {
     System.loadLibrary("wvware-android");
   }
+
+  private static final String s_TAG = "wvWare-Android";
 
   private File m_outputDir;
 
@@ -102,6 +105,20 @@ public final class wvWare {
       outputFile.delete();
       removeFileOrDirectoryRecursively(imagesDir);
       throw new ConversionFailedException("Return value from wvWare: " + retVal);
+    }
+
+    if (this.p_isNoGraphicsMode) {
+      try {
+        File htmlWithImagesEmbedded = generateUniqueFile(outputFile.getName(), ".imagesEmbedded.html");
+        if (ImageEmbedder.embedImages(outputFile, htmlWithImagesEmbedded, imagesDir)) {
+          htmlWithImagesEmbedded.renameTo(outputFile);
+        } else {
+          htmlWithImagesEmbedded.delete();
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+        Log.e(s_TAG, "Failed to embed images");
+      }
     }
 
     // Clean up extracted images from cache
