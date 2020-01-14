@@ -25,6 +25,8 @@
 
 static FILE * g_htmlOutputFileHandle = nullptr;
 
+extern "C" int no_graphics;
+
 extern "C" {
 
 char *s_WVDATADIR = NULL;
@@ -88,11 +90,14 @@ Java_com_viliussutkus89_android_wvware_wvWare__1convertToHTML(JNIEnv *env, jobje
                                                               jstring input_file,
                                                               jstring output_file,
                                                               jstring images_dir,
-                                                              jstring password_) {
+                                                              jstring password_,
+                                                              jboolean is_no_graphics_mode) {
   CharGC inputFile(env, input_file);
   CCharGC outputFile(env, output_file);
   CharGC imagesDir(env, images_dir);
   CCharGC password(env, password_);
+
+  no_graphics = is_no_graphics_mode == JNI_TRUE ? 1 : 0;
 
   g_htmlOutputFileHandle = fopen(outputFile.c_str(), "w");
 

@@ -39,6 +39,8 @@ public final class wvWare {
 
   private String p_password = "";
 
+  private boolean p_isNoGraphicsMode = false;
+
   public static class ConversionFailedException extends Exception {
     public ConversionFailedException(String errorMessage) {
       super(errorMessage);
@@ -67,6 +69,11 @@ public final class wvWare {
     return this;
   }
 
+  public wvWare setNoGraphicsMode() {
+    this.p_isNoGraphicsMode = true;
+    return this;
+  }
+
   /*
    * @deprecated wvWare-Android doesn't fork anymore
    */
@@ -89,7 +96,7 @@ public final class wvWare {
     File imagesDir = generateUniqueFolder(filename);
 
     int retVal = _convertToHTML(this.p_inputDOC.getAbsolutePath(), outputFile.getAbsolutePath(),
-      imagesDir.getAbsolutePath(), this.p_password);
+      imagesDir.getAbsolutePath(), this.p_password, this.p_isNoGraphicsMode);
 
     if (0 != retVal) {
       outputFile.delete();
@@ -140,5 +147,5 @@ public final class wvWare {
 
   private native void setDataDir(String dataDir);
 
-  private native int _convertToHTML(String inputFile, String outputFile, String imagesDir, String password);
+  private native int _convertToHTML(String inputFile, String outputFile, String imagesDir, String password, boolean isNoGraphicsMode);
 }
