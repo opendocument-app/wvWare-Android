@@ -26,6 +26,7 @@ import com.viliussutkus89.android.assetextractor.AssetExtractor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public final class wvWare {
   static {
@@ -74,7 +75,7 @@ public final class wvWare {
     return this;
   }
 
-  public File convertToHTML() throws ConversionFailedException, FileNotFoundException {
+  public File convertToHTML() throws ConversionFailedException, FileNotFoundException, IOException {
     if (null == this.p_inputDOC) {
       throw new ConversionFailedException("No Input DOC given!");
     }
@@ -83,27 +84,47 @@ public final class wvWare {
       throw new FileNotFoundException();
     }
 
-    String inputFilenameNoDOCExt = this.p_inputDOC.getName();
-    if (inputFilenameNoDOCExt.endsWith(".doc")) {
-      inputFilenameNoDOCExt = inputFilenameNoDOCExt.substring(0, inputFilenameNoDOCExt.length() - 4);
-    }
+    String filename = removeExtensionFromFilename();
+    File outputFile = generateUniqueFile(filename, ".html");
+    File imagesDir = generateUniqueFolder(filename);
 
-    File outputDir = new File(this.m_outputDir, inputFilenameNoDOCExt);
-    for (int i = 0; !outputDir.mkdir(); i++) {
-      outputDir = new File(this.m_outputDir, inputFilenameNoDOCExt + "-" + i);
-    }
+    int retVal = _convertToHTML(this.p_inputDOC.getAbsolutePath(), outputFile.getAbsolutePath(),
+      imagesDir.getAbsolutePath(), this.p_password);
 
-    File outputFile = new File(outputDir, inputFilenameNoDOCExt + ".html");
-    int retVal = _convertToHTML(this.p_inputDOC.getAbsolutePath(), outputDir.getAbsolutePath(), outputFile.getAbsolutePath(), this.p_password);
     if (0 != retVal) {
       outputFile.delete();
-      throw new ConversionFailedException("Conversion failed. Return value from wvWare: " + retVal);
+      throw new ConversionFailedException("Return value from wvWare: " + retVal);
     }
 
     return outputFile;
   }
 
+  private String removeExtensionFromFilename() {
+    String filename = this.p_inputDOC.getName();
+    int pos = filename.lastIndexOf('.');
+    if (0 < pos) {
+      return filename.substring(0, pos);
+    }
+    return filename;
+  }
+
+  private File generateUniqueFolder(String prefix) {
+    File result = new File(this.m_outputDir, prefix);
+    for (int i = 0; !result.mkdir(); i++) {
+      result = new File(this.m_outputDir, prefix + "-" + i);
+    }
+    return result;
+  }
+
+  private File generateUniqueFile(String prefix, String suffix) throws IOException {
+    File result = new File(this.m_outputDir, prefix + suffix);
+    for (int i = 0; !result.createNewFile(); i++) {
+      result = new File(this.m_outputDir, prefix + "-" + i + suffix);
+    }
+    return result;
+  }
+
   private native void setDataDir(String dataDir);
 
-  private native int _convertToHTML(String inputFile, String outputDir, String outputFile, String password);
+  private native int _convertToHTML(String inputFile, String outputFile, String imagesDir, String password);
 }
