@@ -86,17 +86,17 @@ int printfRedirect(const char *fmt, ...) {
 JNIEXPORT jint JNICALL
 Java_com_viliussutkus89_android_wvware_wvWare__1convertToHTML(JNIEnv *env, jobject,
                                                               jstring input_file,
-                                                              jstring output_dir,
                                                               jstring output_file,
+                                                              jstring images_dir,
                                                               jstring password_) {
   CharGC inputFile(env, input_file);
-  CharGC outputDir(env, output_dir);
   CCharGC outputFile(env, output_file);
+  CharGC imagesDir(env, images_dir);
   CCharGC password(env, password_);
 
   g_htmlOutputFileHandle = fopen(outputFile.c_str(), "w");
 
-  int retVal = convert(inputFile.c_str(), outputDir.c_str(), password.c_str());
+  int retVal = convert(inputFile.c_str(), imagesDir.c_str(), password.c_str());
 
   fclose(g_htmlOutputFileHandle);
   g_htmlOutputFileHandle = nullptr;
