@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
@@ -67,7 +68,7 @@ public class InstrumentedTests {
       wv.setInputDOC(docFile);
       try {
         htmlFile = wv.convertToHTML();
-      } catch (wvWare.ConversionFailedException | FileNotFoundException e) {
+      } catch (wvWare.ConversionFailedException | IOException e) {
         docFile.delete();
         e.printStackTrace();
         fail("Failed to convert DOC to HTML: " + i);
