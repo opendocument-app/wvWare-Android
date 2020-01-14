@@ -15,7 +15,7 @@
  extern "C" {
  #endif
  
-+int printfRedirected(const char* __fmt, ...);
++int printfRedirect(const char* __fmt, ...);
 +#define printf printfRedirect
 +
  /* The structure below is used to refer to a wvStream.  Usually,
