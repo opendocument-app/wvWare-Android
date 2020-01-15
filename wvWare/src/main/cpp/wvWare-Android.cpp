@@ -32,6 +32,8 @@ extern "C" {
 char *s_WVDATADIR = NULL;
 char *s_HTMLCONFIG = NULL;
 
+int documentId = 0;
+
 int convert(char *inputFile, char *outputDir, const char *password);
 
 char *strdup_and_append(const char *a, const char *b) {
@@ -106,6 +108,7 @@ Java_com_viliussutkus89_android_wvware_wvWare__1convertToHTML(JNIEnv *env, jobje
   fclose(g_htmlOutputFileHandle);
   g_htmlOutputFileHandle = nullptr;
 
+  documentId++;
   return retVal;
 }
 

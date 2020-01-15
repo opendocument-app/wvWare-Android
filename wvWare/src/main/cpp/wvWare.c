@@ -36,8 +36,16 @@ extern char *strdup (const char *);
 extern char *str_copy(char *d, size_t n, char *s);
 extern char *str_append(char *d, size_t n, char *s);
 
-extern char * s_WVDATADIR;
-extern char * s_HTMLCONFIG;
+extern char *s_WVDATADIR;
+extern char *s_HTMLCONFIG;
+extern int documentId;
+#define static_reinit( variable, defaultValue ) { \
+  static int staticVarValue = 0; \
+  if (staticVarValue != documentId) { \
+    variable = defaultValue; \
+    staticVarValue = documentId; \
+  } \
+}
 
 extern char * strdup_and_append_twice(const char * a, const char * b, const char * c);
 
@@ -612,6 +620,8 @@ int
 myelehandler (wvParseStruct * ps, wvTag tag, void *props, int dirty)
 {
     static PAP *ppap;
+    static_reinit(ppap, NULL)
+
     expand_data *data = (expand_data *) ps->userData;
     data->anSttbfAssoc = &ps->anSttbfAssoc;
     data->lfo = &ps->lfo;
@@ -710,6 +720,7 @@ int
 mydochandler (wvParseStruct * ps, wvTag tag)
 {
     static int i;
+    static_reinit(i, 0)
     expand_data *data = (expand_data *) ps->userData;
     data->anSttbfAssoc = &ps->anSttbfAssoc;
     data->lfo = &ps->lfo;
@@ -1398,6 +1409,7 @@ int
 mySpecCharProc (wvParseStruct * ps, U16 eachchar, CHP * achp)
 {
     static int message;
+    static_reinit(message, 0)
     PICF picf;
     FSPA *fspa;
     expand_data *data = (expand_data *) ps->userData;
@@ -1751,7 +1763,9 @@ wvOpenConfig (state_data *myhandle,char *config)
 char * figure_name (wvParseStruct * ps)
 {
   static int number;
+  static_reinit(number, 0)
   static char * b_name = 0;
+  static_reinit(b_name, NULL)
   char * f_name = 0;
   char buffer[10];
 
@@ -1812,7 +1826,9 @@ char * figure_name (wvParseStruct * ps)
 char * name_to_url (char * name)
 {
   static char * url = 0;
+  static_reinit(url, NULL)
   static long max = 0;
+  static_reinit(max, 0)
   char * ptr = 0;
   long count = 0;
 
