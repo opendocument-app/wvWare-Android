@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
@@ -74,6 +73,46 @@ public class InstrumentedTests {
       } finally {
         docFile.delete();
       }
+    }
+  }
+
+  @Test
+  public void testAllSuppliedDOCsInNoGraphicsMode() {
+    wvWare converter = new wvWare(InstrumentationRegistry.getInstrumentation().getTargetContext())
+      .setNoGraphicsMode();
+
+    for (String i: m_DOCsToTest) {
+      File docFile = extractAssetDOC(i);
+      converter.setInputDOC(docFile);
+      try {
+        File htmlFile = converter.convertToHTML();
+        assertTrue("Converted HTML file not found! " + i, htmlFile.exists());
+        assertTrue("Converted HTML file empty! " + i, htmlFile.length() > 0);
+        htmlFile.delete();
+      } catch (wvWare.ConversionFailedException | IOException e) {
+        e.printStackTrace();
+        fail("Failed to convert DOC to HTML: " + i);
+      } finally {
+        docFile.delete();
+      }
+    }
+  }
+
+  @Test
+  public void HtmlFileLargerWithImageEmbedded() {
+    wvWare converter = new wvWare(InstrumentationRegistry.getInstrumentation().getTargetContext());
+
+    File docFile = extractAssetDOC("sample.doc");
+    converter.setInputDOC(docFile);
+    try {
+      File html = converter.convertToHTML();
+      File htmlNoGraphics = converter.setNoGraphicsMode().convertToHTML();
+      assertTrue(html.length() > htmlNoGraphics.length());
+    } catch (wvWare.ConversionFailedException | IOException e) {
+      e.printStackTrace();
+      fail();
+    } finally {
+      docFile.delete();
     }
   }
 
