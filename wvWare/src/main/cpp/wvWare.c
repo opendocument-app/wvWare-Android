@@ -540,7 +540,7 @@ int convert(char *inputFile, char *outputDir, const char *password) {
       {
         fprintf (stderr,
                  "Password required, this is an encrypted document\n");
-        return (-1);
+        return 100;
       }
       else
       {
@@ -548,7 +548,7 @@ int convert(char *inputFile, char *outputDir, const char *password) {
         if (wvDecrypt97 (&ps))
         {
           wvError (("Incorrect Password\n"));
-          return (-1);
+          return 101;
         }
       }
     }
@@ -559,7 +559,7 @@ int convert(char *inputFile, char *outputDir, const char *password) {
       {
         fprintf (stderr,
                  "Password required, this is an encrypted document\n");
-        return (-1);
+        return 100;
       }
       else
       {
@@ -567,7 +567,7 @@ int convert(char *inputFile, char *outputDir, const char *password) {
         if (wvDecrypt95 (&ps))
         {
           wvError (("Incorrect Password\n"));
-          return (-1);
+          return 101;
         }
       }
     }

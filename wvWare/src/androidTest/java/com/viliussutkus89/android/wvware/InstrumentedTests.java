@@ -116,4 +116,38 @@ public class InstrumentedTests {
     }
   }
 
+  @Test
+  public void encryptedDOC() {
+    wvWare converter = new wvWare(InstrumentationRegistry.getInstrumentation().getTargetContext());
+
+    File docFile = extractAssetDOC("passwordProtected.doc");
+    converter.setInputDOC(docFile);
+    try {
+      converter.convertToHTML();
+      fail("Conversion succeeded when it should have failed because of no password!");
+    } catch (wvWare.PasswordRequiredException ignored) {
+    } catch (wvWare.ConversionFailedException | IOException e) {
+      e.printStackTrace();
+      fail();
+    }
+
+    try {
+      converter.setPassword("Some wrong password").convertToHTML();
+      fail("Conversion succeeded when it should have failed because of wrong password!");
+    } catch (wvWare.WrongPasswordException ignored) {
+    } catch (wvWare.ConversionFailedException | IOException e) {
+      e.printStackTrace();
+      fail();
+    }
+
+    try {
+      converter.setPassword("toc").convertToHTML().delete();
+    } catch (wvWare.ConversionFailedException | IOException e) {
+      e.printStackTrace();
+      fail();
+    }
+
+    docFile.delete();
+  }
+
 }

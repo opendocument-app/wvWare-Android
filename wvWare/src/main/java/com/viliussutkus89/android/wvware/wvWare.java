@@ -50,6 +50,18 @@ public final class wvWare {
     }
   }
 
+  public static class PasswordRequiredException extends ConversionFailedException {
+    public PasswordRequiredException(String errorMessage) {
+      super(errorMessage);
+    }
+  }
+
+  public static class WrongPasswordException extends ConversionFailedException {
+    public WrongPasswordException(String errorMessage) {
+      super(errorMessage);
+    }
+  }
+
   public wvWare(@NonNull Context ctx) {
     init(ctx);
   }
@@ -85,7 +97,8 @@ public final class wvWare {
     return this;
   }
 
-  public File convertToHTML() throws ConversionFailedException, FileNotFoundException, IOException {
+  public File convertToHTML() throws PasswordRequiredException, WrongPasswordException,
+    ConversionFailedException, FileNotFoundException, IOException {
     if (null == this.p_inputDOC) {
       throw new ConversionFailedException("No Input DOC given!");
     }
@@ -104,7 +117,13 @@ public final class wvWare {
     if (0 != retVal) {
       outputFile.delete();
       removeFileOrDirectoryRecursively(imagesDir);
-      throw new ConversionFailedException("Return value from wvWare: " + retVal);
+      if (100 == retVal) {
+        throw new PasswordRequiredException("Password is required to decrypt this encrypted document!");
+      } else if (101 == retVal) {
+        throw new WrongPasswordException("Wrong password is supplied to decrypt this encrypted document");
+      } else {
+        throw new ConversionFailedException("Return value from wvWare: " + retVal);
+      }
     }
 
     if (this.p_isNoGraphicsMode) {
