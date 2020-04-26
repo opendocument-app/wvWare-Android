@@ -7,7 +7,10 @@ buildscript {
         
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        //@TODO: don't update to 3.6.x
+        //For some reason 3.6.x gradle plugin requires NDK 20.0.something
+        //The fact that this project uses NDK 21.1.something is irrelevant
+        classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
 
         // NOTE: Do not place your application dependencies here; they belong
