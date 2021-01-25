@@ -39,8 +39,8 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - with:
-        ref: master
+        with:
+          ref: master
 
       - run: ./doincrementversion
 
@@ -54,8 +54,8 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - with:
-        ref: master
+        with:
+          ref: master
 
       - uses: actions/setup-java@v1
         with:
