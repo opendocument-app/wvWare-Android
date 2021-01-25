@@ -24,7 +24,7 @@ jobs:
           java-version: 1.8
 
       - name: Cache android-sdk.zip
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           key: android-sdk.zip-${{ env.ANDROID_SDK_TOOLS }}
           path: android-sdk
@@ -34,7 +34,7 @@ jobs:
       - run: .github/installBuildDependencies.sh
 
       - name: Cache tarballs
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           key: ${{ env.TARBALL_CACHE_KEY }}
           path: dependency-builder/src/main/cpp/tarballs
@@ -94,7 +94,7 @@ jobs:
           java-version: 1.8
 
       - name: Cache android-sdk.zip
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           key: android-sdk.zip-${{ env.ANDROID_SDK_TOOLS }}
           path: android-sdk
@@ -102,7 +102,7 @@ jobs:
       - run: .github/installAndroidTools.sh
 
       - name: Cache tarballs
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           key: ${{ env.TARBALL_CACHE_KEY }}
           path: dependency-builder/src/main/cpp/tarballs
