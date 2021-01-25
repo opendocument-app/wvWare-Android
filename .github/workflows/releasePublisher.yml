@@ -15,7 +15,7 @@ jobs:
           java-version: 1.8
 
       - name: Download assets from this Release
-        uses: ViliusSutkus89/release-asset-downloader@v1.0.3
+        uses: ViliusSutkus89/release-asset-downloader@v1.0
         with:
           outputDirectory: 'releaseAssets'
 
