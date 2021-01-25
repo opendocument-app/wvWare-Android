@@ -47,7 +47,7 @@ jobs:
       - uses: ViliusSutkus89/git-auto-commit-action@v4
         with:
           commit_message: "Post release version increment"
-            file_pattern wvWare/build.gradle README.md sample-app/app/build.gradle
+          file_pattern: wvWare/build.gradle README.md sample-app/app/build.gradle
 
   sampleApp:
     needs: versionIncrementer
