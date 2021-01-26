@@ -87,12 +87,6 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Cache android-sdk.zip
-        uses: actions/cache@v2
-        with:
-          key: android-sdk.zip-${{ env.ANDROID_SDK_TOOLS }}
-          path: android-sdk
-
       - uses: ViliusSutkus89/setup-android@release
       - run: sdkmanager "ndk;${{env.ANDROID_NDK}}" "cmake;${{env.ANDROID_CMAKE}}"
 
