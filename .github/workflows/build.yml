@@ -2,7 +2,7 @@ name: Build
 on: push
 
 env:
-  ANDROID_NDK:        "21.1.6352462"
+  ANDROID_NDK:        "22.0.7026061"
   ANDROID_CMAKE:      "3.10.2.4988404"
   TARBALL_CACHE_KEY:  "tarballs-key-2"
 
