@@ -7,10 +7,7 @@ buildscript {
         
     }
     dependencies {
-        //@TODO: don't update to 3.6.x
-        //For some reason 3.6.x gradle plugin requires NDK 20.0.something
-        //The fact that this project (sample app) does not use NDK is irrelevant
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:4.1.2'
 
         // 0.10.0 is broken
         // https://github.com/google/play-services-plugins/issues/105
@@ -32,3 +29,4 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+

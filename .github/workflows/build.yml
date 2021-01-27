@@ -2,8 +2,7 @@ name: Build
 on: push
 
 env:
-  ANDROID_SDK_TOOLS:  "4333796"
-  ANDROID_NDK:        "21.1.6352462"
+  ANDROID_NDK:        "22.0.7026061"
   ANDROID_CMAKE:      "3.10.2.4988404"
   TARBALL_CACHE_KEY:  "tarballs-key-2"
 
@@ -23,13 +22,8 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Cache android-sdk.zip
-        uses: actions/cache@v2
-        with:
-          key: android-sdk.zip-${{ env.ANDROID_SDK_TOOLS }}
-          path: android-sdk
-
-      - run: .github/installAndroidTools.sh
+      - uses: ViliusSutkus89/setup-android@release
+      - run: sdkmanager "ndk;${{env.ANDROID_NDK}}" "cmake;${{env.ANDROID_CMAKE}}"
 
       - run: .github/installBuildDependencies.sh
 
@@ -93,13 +87,8 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Cache android-sdk.zip
-        uses: actions/cache@v2
-        with:
-          key: android-sdk.zip-${{ env.ANDROID_SDK_TOOLS }}
-          path: android-sdk
-
-      - run: .github/installAndroidTools.sh
+      - uses: ViliusSutkus89/setup-android@release
+      - run: sdkmanager "ndk;${{env.ANDROID_NDK}}" "cmake;${{env.ANDROID_CMAKE}}"
 
       - name: Cache tarballs
         uses: actions/cache@v2
