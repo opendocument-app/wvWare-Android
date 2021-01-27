@@ -24,16 +24,13 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.viliussutkus89.android.assetextractor.AssetExtractor;
+import com.viliussutkus89.android.tmpfile.Tmpfile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public final class wvWare {
-  static {
-    System.loadLibrary("wvware-android");
-  }
-
   private static final String s_TAG = "wvWare-Android";
 
   private File m_outputDir;
@@ -67,6 +64,9 @@ public final class wvWare {
   }
 
   private synchronized void init(@NonNull Context ctx) {
+    Tmpfile.init(ctx.getCacheDir());
+    System.loadLibrary("wvware-android");
+
     AssetExtractor ae = new AssetExtractor(ctx.getAssets()).setNoOverwrite();
     setDataDir(ae.extract(ctx.getFilesDir(), "wv").getAbsolutePath());
 
