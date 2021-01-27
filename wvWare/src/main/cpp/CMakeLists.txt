@@ -26,13 +26,6 @@ include(FindPkgConfig)
 
 find_library(log-lib log)
 
-add_library(tmpfile SHARED IMPORTED)
-set_property(TARGET tmpfile PROPERTY IMPORTED_LOCATION
-        # libtmpfile.so will be extracted in this directory by
-        # task extractLibtmpfileSoForLinkingInCMake in sampleapp/app/build.gradle
-        ${CMAKE_CURRENT_LIST_DIR}/../../../build/tmpfile/jni/${ANDROID_ABI}/libtmpfile.so
-        )
-
 pkg_search_module(wvWare REQUIRED wv-1.0)
 
 link_directories(${wvWare_LIBRARY_DIRS})
@@ -46,4 +39,5 @@ add_library(wvware-android SHARED wvWare-Android.cpp
 
 target_include_directories(wvware-android PRIVATE ${wvWare_INCLUDE_DIRS})
 
-target_link_libraries(wvware-android ${wvWare_LIBRARIES} ${log-lib} tmpfile)
+find_package(tmpfile REQUIRED CONFIG)
+target_link_libraries(wvware-android ${wvWare_LIBRARIES} ${log-lib} tmpfile::tmpfile)
