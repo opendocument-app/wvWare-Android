@@ -1,0 +1,341 @@
+name: privilegedBuild
+on:
+  workflow_dispatch:
+  push:
+    branches: master
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/manualVersionIncrement*.yml'
+      - '.github/workflows/unprivilegedBuild.yml'
+
+env:
+  ANDROID_NDK:        "22.0.7026061"
+  ANDROID_CMAKE:      "3.10.2.4988404"
+  TARBALL_CACHE_KEY:  "tarballs-key-2"
+
+permissions:
+  actions: none
+  checks: none
+  contents: none
+  deployments: none
+  issues: none
+  packages: none
+  pull-requests: none
+  repository-projects: none
+  security-events: none
+  statuses: none
+
+jobs:
+  buildDependencies:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        abi: [ x86, x86_64, armeabi-v7a, arm64-v8a ]
+        buildType: [ Debug, Release ]
+        include:
+          - buildType: Debug
+            CMakeBuildType: Debug
+          - buildType: Release
+            CMakeBuildType: MinSizeRel
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: 8
+      - uses: android-actions/setup-android@v2
+      - run: sdkmanager "ndk;${{env.ANDROID_NDK}}" "cmake;${{env.ANDROID_CMAKE}}"
+      - run: sudo -H pip3 install meson
+
+      - name: Cache tarballs
+        uses: actions/cache@v2
+        with:
+          key: ${{ env.TARBALL_CACHE_KEY }}
+          path: dependency-builder/src/main/cpp/tarballs
+
+      - run: ./dodownloadtarballs --serial
+
+      - name: Build dependencies of wvWare-Android
+        run: ./gradlew dependency-builder:assemble${{ matrix.buildType }} -PdisablePreDex -Pabi=${{ matrix.abi }}
+
+      - name: Gather licenses
+        if: matrix.abi == 'armeabi-v7a' && matrix.buildType == 'Release'
+        run: ./gradlew dependency-builder:gatherLicenses -PdisablePreDex -Pabi=${{ matrix.abi }}
+
+      - name: Artifact gathered licenses
+        if: matrix.abi == 'armeabi-v7a' && matrix.buildType == 'Release'
+        uses: actions/upload-artifact@v2
+        with:
+          name: licenses
+          path: dependency-builder/build/licenses.xml
+
+      - name: Prepare built dependencies for artifacting
+        run: |
+          mkdir --parents pdeps/bin
+          mv dependency-builder/build/installed/${{ matrix.CMakeBuildType }}/${{ matrix.abi }}/bin/pkg-config pdeps/bin/
+          mv dependency-builder/build/installed/${{ matrix.CMakeBuildType }}/${{ matrix.abi }}/include pdeps/
+          mv dependency-builder/build/installed/${{ matrix.CMakeBuildType }}/${{ matrix.abi }}/lib pdeps/
+
+      - name: Artifact built dependencies
+        uses: actions/upload-artifact@v2
+        with:
+          name: dependencies-${{ matrix.buildType }}-${{ matrix.abi }}
+          path: pdeps
+
+      - name: Artifact assets
+        if: matrix.abi == 'armeabi-v7a' && matrix.buildType == 'Release'
+        uses: actions/upload-artifact@v2
+        with:
+          name: wv-assets
+          path: dependency-builder/build/assets/wv
+
+  build:
+    needs: buildDependencies
+    runs-on: ubuntu-20.04
+    environment: BuildWithDeployToSonatype
+    outputs:
+      STAGING_REPO_URL: ${{ steps.sonatype.outputs.stagingRepoUrl }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: 8
+      - uses: android-actions/setup-android@v2
+      - run: sdkmanager "ndk;${{env.ANDROID_NDK}}" "cmake;${{env.ANDROID_CMAKE}}"
+
+      - name: Cache tarballs
+        uses: actions/cache@v2
+        with:
+          key: ${{ env.TARBALL_CACHE_KEY }}
+          path: dependency-builder/src/main/cpp/tarballs
+
+      - run: ./dodownloadtarballs --serial
+
+      - name: Download artifacted dependencies - x86 - release
+        uses: actions/download-artifact@v1
+        with:
+          name: dependencies-Release-x86
+          path: dependency-builder/build/installed/MinSizeRel/x86
+
+      - name: Download artifacted dependencies - x86_64 - release
+        uses: actions/download-artifact@v1
+        with:
+          name: dependencies-Release-x86_64
+          path: dependency-builder/build/installed/MinSizeRel/x86_64
+
+      - name: Download artifacted dependencies - armeabi-v7a - release
+        uses: actions/download-artifact@v1
+        with:
+          name: dependencies-Release-armeabi-v7a
+          path: dependency-builder/build/installed/MinSizeRel/armeabi-v7a
+
+      - name: Download artifacted dependencies - arm64-v8a - release
+        uses: actions/download-artifact@v1
+        with:
+          name: dependencies-Release-arm64-v8a
+          path: dependency-builder/build/installed/MinSizeRel/arm64-v8a
+
+      - name: Download artifacted dependencies - x86 - debug
+        uses: actions/download-artifact@v1
+        with:
+          name: dependencies-Debug-x86
+          path: dependency-builder/build/installed/Debug/x86
+
+      - name: Download artifacted dependencies - x86_64 - debug
+        uses: actions/download-artifact@v1
+        with:
+          name: dependencies-Debug-x86_64
+          path: dependency-builder/build/installed/Debug/x86_64
+
+      - name: Download artifacted dependencies - armeabi-v7a - debug
+        uses: actions/download-artifact@v1
+        with:
+          name: dependencies-Debug-armeabi-v7a
+          path: dependency-builder/build/installed/Debug/armeabi-v7a
+
+      - name: Download artifacted dependencies - arm64-v8a - debug
+        uses: actions/download-artifact@v1
+        with:
+          name: dependencies-Debug-arm64-v8a
+          path: dependency-builder/build/installed/Debug/arm64-v8a
+
+      - run: chmod +x dependency-builder/build/installed/{MinSizeRel,Debug}/{x86,x86_64,armeabi-v7a,arm64-v8a}/bin/pkg-config
+
+      - name: Download artifacted wv assets
+        uses: actions/download-artifact@v1
+        with:
+          name: wv-assets
+          path: dependency-builder/build/assets/wv
+
+      - name: Download artifacted licenses
+        uses: actions/download-artifact@v1
+        with:
+          name: licenses
+          path: dependency-builder/build/
+
+      - run: ./gradlew assembleRelease -PdisablePreDex
+
+      - name: 'Publish to Sonatype'
+        run: ./gradlew publishToSonatype closeSonatypeStagingRepository | tee publishToSonatype.log
+        # bash has pipefail on by default, which is needed for tee to fail, if gradle fails
+        shell: bash
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASS: ${{ secrets.SIGNING_PASS }}
+
+      - name: 'Parse Sonatype repository'
+        id: sonatype
+        # publishToSonatype.log contains a line looking like this:
+        # Created staging repository 'comviliussutkus89-1055' at https://oss.sonatype.org/service/local/repositories/comviliussutkus89-1055/content/
+        run: perl -ne 'print "::set-output name=stagingRepoUri::$2\n::warning ::$1\n" if /^(Created staging repository .+ at (.+))$/' < publishToSonatype.log
+
+      - name: Prepare sample app for staging repository
+        run: ./ci-scripts/prepareSampleAppForStagingRepository sample-app app --output=build/sampleapp-staging --repository=${{ steps.sonatype.outputs.stagingRepoUri }}
+
+      - name: Build sample app from staging library
+        run: ./gradlew build
+        working-directory: build/sampleapp-staging
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: sampleapp-staging
+          path: build/sampleapp-staging/app/build/outputs/apk/debug/app-debug.apk
+
+      - run: ./gradlew publishToMavenLocal
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASS: ${{ secrets.SIGNING_PASS }}
+      - run: tar -cvf maven-local.tar ~/.m2
+      - uses: actions/upload-artifact@v2
+        with:
+          name: maven-local
+          path: maven-local.tar
+
+  staging:
+    needs: build
+    # Only macos VMs are available with exposed CPU extensions to run hardware accelerated emulator
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [16, 21, 30]
+        arch: [x86, x86_64]
+        target: [default]
+        include:
+          - api-level: 30
+            arch: x86
+            target: google_apis
+          - api-level: 30
+            arch: x86_64
+            target: google_apis
+        exclude:
+          - api-level: 16
+            arch: x86_64
+          - api-level: 30
+            target: default
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: 8
+      - uses: android-actions/setup-android@v2
+
+      - run: ./ci-scripts/prepareLibraryTestsForStagingRepository wvWare --output=build/lib-staging --repository=${{ needs.build.outputs.STAGING_REPO_URI }}
+
+      - run: ./gradlew assemble
+        working-directory: build/lib-staging
+
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: ${{ matrix.arch }}
+          target: ${{ matrix.target }}
+          script: ./gradlew connectedCheck
+          working-directory: build/lib-staging
+
+  releaseSonatype:
+    environment: ReleaseSonatype
+    needs: [build, staging]
+    runs-on: ubuntu-20.04
+    outputs:
+      ARTIFACTS: ${{ steps.promote.outputs.artifacts }}
+    steps:
+      - uses: ViliusSutkus89/promote-Nexus-repository-to-MavenCentral@v1
+        id: promote
+        with:
+          repositoryURL: ${{ needs.build.outputs.STAGING_REPO_URL }}
+          sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+
+  releaseGitHub:
+    environment: ReleaseGitHub
+    needs: releaseSonatype
+    permissions:
+      # Needed to make a version increment commit, maybe GitHub release too.
+      contents: write
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # A branch is required for post release version increment commit
+          ref: ${{ github.event.ref }}
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: 8
+      - uses: android-actions/setup-android@v2
+
+      - uses: ViliusSutkus89/WaitForURLsToBeAvailable@v1
+        with:
+          URLs: ${{ needs.releaseSonatype.outputs.ARTIFACTS }}
+
+      - run: ./ci-scripts/incrementVersion --release --patch
+        id: version
+
+      - name: Decode keystore used for Sample app signing
+        id: decodeKeystore
+        run: |
+          echo "${{ env.APP_SIGNING_KEYFILE_BASE64 }}" | base64 --decode - > "$HOME/com.viliussutkus89.android.wvware.sampleapp.jks"
+          echo "::set-output name=APP_SIGNING_KEYFILE::$HOME/com.viliussutkus89.android.wvware.sampleapp.jks"
+        env:
+          APP_SIGNING_KEYFILE_BASE64: ${{ secrets.APP_SIGNING_KEYFILE_BASE64 }}
+
+      - name: Build sample app from released library
+        run: ./gradlew build
+        working-directory: sample-app
+        env:
+          APP_SIGNING_KEYFILE: ${{ steps.decodeKeystore.outputs.APP_SIGNING_KEYFILE }}
+          APP_SIGNING_PASS: ${{ secrets.APP_SIGNING_PASS }}
+          APP_SIGNING_ALIAS: ${{ secrets.APP_SIGNING_ALIAS }}
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: maven-local
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "v${{ steps.version.outputs.releasedVersion }}"
+          name: "${{ github.event.repository.name }} v${{ steps.version.outputs.releasedVersion }}"
+          artifacts: "sample-app/app/build/outputs/apk/release/app-release.apk,maven-local.tar"
+          bodyFile: "UpcomingReleaseNotes.md"
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Post release version increment to ${{ steps.version.outputs.unreleasedVersion }} (from ${{ steps.version.outputs.releasedVersion }})"
+          file_pattern: ${{ steps.version.outputs.files }}
+
+      - run: echo -n > UpcomingReleaseNotes.md
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Post release truncation of UpcomingReleaseNotes.md"
+          file_pattern: UpcomingReleaseNotes.md

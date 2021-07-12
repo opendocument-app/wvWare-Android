@@ -1,0 +1,48 @@
+#!/usr/bin/env perl
+# ci-scripts/lib/getVersion.pm is symlinked to ci-scripts/getVersion
+# This is needed to make this script both a module and a script.
+package getVersion;
+use strict;
+use warnings;
+
+use base 'Exporter';
+our $VERSION = '1.03';
+our @EXPORT = qw(getVersion);
+our @EXPORT_OK = qw(getVersionCode);
+
+use File::Basename 'dirname';
+sub getLibDir {
+    my $thisDir = File::Basename::dirname(__FILE__);
+    if ('lib' ne substr($thisDir, -3)) {
+        return $thisDir . '/lib';
+    }
+    return $thisDir;
+}
+
+use lib getLibDir();
+use fileParser 'grepSingleLine';
+use pathResolver 'getAbsolutePath', 'getAbsolutePathOfBasedir';
+
+my $rootDir = pathResolver::getAbsolutePathOfBasedir(getLibDir, 2);
+
+sub getVersion {
+    my ($version) = fileParser::grepSingleLine(
+        pathResolver::getAbsolutePath($rootDir . '/build.gradle'),
+        qr/^version\s*=\s*["'](\d+\.\d+\.\d+)["']$/
+    );
+    return $version;
+}
+
+sub getVersionCode {
+    my ($versionCode) = fileParser::grepSingleLine(
+        pathResolver::getAbsolutePath($rootDir . '/wvWare/build.gradle'),
+        qr/versionCode\s+(\d+)\s*$/
+    );
+    return $versionCode;
+}
+
+if (not caller()) {
+    print getVersion(), "\n";
+}
+
+1;

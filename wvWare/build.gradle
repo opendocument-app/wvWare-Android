@@ -16,12 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-version = '1.2.5'
 group = 'com.viliussutkus89'
 
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -56,8 +56,8 @@ task sourceJar(type: Jar) {
     into ("", { from file("../LICENSE")})
     into ("cpp", { from fileTree(dir: "src/main/cpp/") } )
     into ("dependency-builder", { from fileTree(dir: "../dependency-builder/src/main/cpp/") } )
-    archiveBaseName = rootProject.name
-    archiveClassifier = 'sources'
+    archiveBaseName.set(rootProject.name)
+    archiveClassifier.set('sources')
 }
 
 task javadoc(type: Javadoc) {
@@ -68,93 +68,103 @@ task javadoc(type: Javadoc) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    archiveClassifier.set('javadoc')
     from javadoc.destinationDir
 }
 
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+//publishing{
+//    publications {
+//        projectRelease(MavenPublication) {
+//            artifactId rootProject.name
+//            artifact "$buildDir/outputs/aar/${rootProject.name}-release.aar"
+//            artifact sourceJar
+//            artifact javadocJar
+//            pom {
+//            }
+//            pom.withXml {
+//                def node = asNode()
+//
+//                def licensesNode = node.appendNode("licenses")
+//                def thisProjLicense = licensesNode.appendNode('license')
+//
+//                thisProjLicense.appendNode('name', 'wvWare-Android')
+//                thisProjLicense.appendNode('url', "wvWare-Android/LICENSE\n\n" + new File("$projectDir/../LICENSE").getText('UTF-8') + "\n\n")
+//                thisProjLicense.appendNode('distribution', 'repo')
+//
+//                new XmlSlurper().parse("$projectDir/../dependency-builder/build/licenses.xml").license.each {
+//                    def license = licensesNode.appendNode('license')
+//                    license.appendNode('name', it.name)
+//                    license.appendNode('url', it.url)
+//                    if (it.distribution) {
+//                        license.appendNode('distribution', it.distribution)
+//                    }
+//                }
+//
+//                def dependenciesNode = node.appendNode('dependencies')
+//                // Iterate over the implementation dependencies (we don't want the test ones),
+//                // adding a <dependency> node for each
+//                configurations.implementation.allDependencies.each {
+//                    // Ensure dependencies such as fileTree are not included in the pom.
+//                    if (it.name != 'unspecified') {
+//                        def dependencyNode = dependenciesNode.appendNode('dependency')
+//                        dependencyNode.appendNode('groupId', it.group)
+//                        dependencyNode.appendNode('artifactId', it.name)
+//                        dependencyNode.appendNode('version', it.version)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
-    publications = ['projectRelease']
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
 
-    pkg {
-        repo = 'maven-repo'
-        name = rootProject.name
-        desc = 'Android port of wvWare - library to load and parse Word 2000, 97, 95 and 6 files'
+                artifactId rootProject.name
+                version = rootProject.version
 
-        websiteUrl = 'https://github.com/ViliusSutkus89/wvWare-Android'
-        vcsUrl = 'https://github.com/ViliusSutkus89/wvWare-Android.git'
-        issueTrackerUrl = 'https://github.com/ViliusSutkus89/wvWare-Android/issues'
+                artifact sourceJar
+                artifact javadocJar
 
-        licenses = ['GPL-3.0-only']
-        labels = ['doc', 'word', 'html', 'word-document-processor', 'android', 'library', 'doc-conversion-library']
-
-        publish = true
-
-        version {
-            name = this.version
-            released = new Date()
-            vcsTag = "v${this.version}"
+                pom {
+                    name = rootProject.name
+                    description = 'wvWare-Android'
+                    url = 'https://github.com/ViliusSutkus89/wvWare-Android'
+                    packaging = 'aar'
+                    inceptionYear = '2019'
+                    licenses {
+                        license {
+                            name = 'GPL-3.0-only'
+                            url = 'https://www.gnu.org/licenses/gpl-3.0.en.html'
+                            distribution = 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = "ViliusSutkus89"
+                            name = "Vilius Sutkus"
+                            email = "ViliusSutkus89@gmail.com"
+                        }
+                    }
+                    scm {
+                        url = 'https://github.com/ViliusSutkus89/wvWare-Android'
+                        connection = 'https://github.com/ViliusSutkus89/wvWare-Android.git'
+                    }
+                }
+            }
         }
     }
-}
 
-publishing{
-    publications {
-        projectRelease(MavenPublication) {
-            artifactId rootProject.name
-            artifact "$buildDir/outputs/aar/${rootProject.name}-release.aar"
-            artifact sourceJar
-            artifact javadocJar
-            pom {
-                packaging = 'aar'
-                url = 'https://github.com/ViliusSutkus89/wvWare-Android'
-                inceptionYear = '2019'
-                developers {
-                    developer {
-                        id = "ViliusSutkus89"
-                        name = "Vilius Sutkus"
-                        email = "ViliusSutkus89@gmail.com"
-                    }
-                }
-                scm {
-                    url = 'https://github.com/ViliusSutkus89/wvWare-Android'
-                    connection = 'https://github.com/ViliusSutkus89/wvWare-Android.git'
-                }
-            }
-            pom.withXml {
-                def node = asNode()
-
-                def licensesNode = node.appendNode("licenses")
-                def thisProjLicense = licensesNode.appendNode('license')
-
-                thisProjLicense.appendNode('name', 'wvWare-Android')
-                thisProjLicense.appendNode('url', "wvWare-Android/LICENSE\n\n" + new File("$projectDir/../LICENSE").getText('UTF-8') + "\n\n")
-                thisProjLicense.appendNode('distribution', 'repo')
-
-                new XmlSlurper().parse("$projectDir/../dependency-builder/build/licenses.xml").license.each {
-                    def license = licensesNode.appendNode('license')
-                    license.appendNode('name', it.name)
-                    license.appendNode('url', it.url)
-                    if (it.distribution) {
-                        license.appendNode('distribution', it.distribution)
-                    }
-                }
-
-                def dependenciesNode = node.appendNode('dependencies')
-                // Iterate over the implementation dependencies (we don't want the test ones),
-                // adding a <dependency> node for each
-                configurations.implementation.allDependencies.each {
-                    // Ensure dependencies such as fileTree are not included in the pom.
-                    if (it.name != 'unspecified') {
-                        def dependencyNode = dependenciesNode.appendNode('dependency')
-                        dependencyNode.appendNode('groupId', it.group)
-                        dependencyNode.appendNode('artifactId', it.name)
-                        dependencyNode.appendNode('version', it.version)
-                    }
-                }
-            }
+    // This may look ugly...
+    // but useInMemoryPgpKeys expects valid keys even with required { false }
+    if (System.getenv('SIGNING_KEY')) {
+        signing {
+            required { true }
+            useInMemoryPgpKeys(System.getenv('SIGNING_KEY'), System.getenv('SIGNING_PASS'))
+            sign publishing.publications.release
         }
     }
 }
@@ -168,21 +178,26 @@ dependencies {
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    //#UNCOMMENT-DURING-STAGING#implementation 'com.viliussutkus89:samplelib:#STAGING-VERSION#'
+    // The line above is used by the scripts/prepareLibraryForStagingRepository
 }
 
 publish.dependsOn ":dependency-builder:gatherLicenses"
+publish.dependsOn ":javadocJar"
+publish.dependsOn ":sourceJar"
 
-task extractLibtmpfileSoForLinkingInCMake {
-    doLast {
-        def tmpfileandroid = configurations.releaseRuntimeClasspath.getResolvedConfiguration().getResolvedArtifacts().find {
-            it.name.startsWith("tmpfile-android")
-        }
-        copy {
-            from zipTree(tmpfileandroid.getFile())
-            into "${project.buildDir}/tmpfile/"
-            include "jni/**/libtmpfile.so"
-        }
-    }
-}
-
-preBuild.dependsOn extractLibtmpfileSoForLinkingInCMake
+//task extractLibtmpfileSoForLinkingInCMake {
+//    doLast {
+//        def tmpfileandroid = configurations.releaseRuntimeClasspath.getResolvedConfiguration().getResolvedArtifacts().find {
+//            it.name.startsWith("tmpfile-android")
+//        }
+//        copy {
+//            from zipTree(tmpfileandroid.getFile())
+//            into "${project.buildDir}/tmpfile/"
+//            include "jni/**/libtmpfile.so"
+//        }
+//    }
+//}
+//
+//preBuild.dependsOn extractLibtmpfileSoForLinkingInCMake

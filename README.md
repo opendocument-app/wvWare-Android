@@ -1,7 +1,7 @@
 # Android port of [wvWare](http://wvware.sourceforge.net/)
 
 ![Build](https://github.com/ViliusSutkus89/wvWare-Android/workflows/Build/badge.svg)
-[![Download](https://api.bintray.com/packages/viliussutkus89/maven-repo/wvware-android/images/download.svg)](https://bintray.com/viliussutkus89/maven-repo/wvware-android/_latestVersion)
+[![Maven Central](https://img.shields.io/maven-central/v/com.viliussutkus89/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
 
 ### Scope:
 Currently limited to wvHtml.
@@ -14,12 +14,13 @@ dependencies {
 }
 ```
 
-wvWare-Android is distributed using [JCenter](https://jcenter.bintray.com) Maven repository.  
+wvWare-Android is distributed using [Maven Central](https://search.maven.org/artifact/com.viliussutkus89/wvware-android) repository.  
 It needs be added to [top level build.gradle](sample-app/build.gradle)
 ```gradle
 allprojects {
   repositories {
-      jcenter()
+      // ...
+      mavenCentral()
   }
 }
 ```

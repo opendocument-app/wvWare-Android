@@ -1,0 +1,103 @@
+#!/usr/bin/env perl
+###########################################################################################
+### The Purpose ### The Purpose ### The Purpose ### The Purpose ### The Purpose ### The ###
+###########################################################################################
+# The purpose of this script is to increment project version in various files.
+# This script may be triggered manually, or during a release.
+###########################################################################################
+### ~The Purpose~ # ~The Purpose~ # ~The Purpose~ # ~The Purpose~ # ~The Purpose~ # ~The~ #
+###########################################################################################
+use warnings;
+use strict;
+
+use File::Basename;
+use Getopt::Long;
+use lib File::Basename::dirname(__FILE__) . '/lib';
+use fileUpdater;
+use getVersion;
+
+sub usage {
+    print STDERR './', File::Basename::basename(__FILE__), " --major|--minor|--patch [--release] [requestedVersion]\n";
+    print STDERR "\tMandatory: major, minor or patch to choose witch version to increment.\n";
+    print STDERR "\tOptional: release to updated README.md and other release files.\n";
+    print STDERR "\tOptional: requestedVersion, to specify new major, minor or patch number.\n";
+    exit 1;
+}
+
+# $oldVersion, $oldVersionCode - pre increment, possibly released
+# $newVersion, $newVersionCode - post increment, to be used for upcoming dev builds
+my $oldVersion = getVersion::getVersion();
+my $oldVersionCode = getVersion::getVersionCode();
+my ($newVersion, $newVersionCode);
+
+my ($upMajor, $upMinor, $upPatch, $isRelease, $help, $requestedVersion);
+Getopt::Long::GetOptions(major => \$upMajor, minor => \$upMinor, patch => \$upPatch, release => \$isRelease, 'help' => \$help);
+if (defined $help) {
+    usage();
+}
+
+if (@ARGV) {
+    $requestedVersion = shift;
+}
+
+my ($major, $minor, $patch_) = $oldVersion =~ /(\d+)\.(\d+)\.(\d+)/;
+if (defined $upMajor) {
+    $major = (defined $requestedVersion) ? $requestedVersion : $major + 1;
+    $newVersion = "${major}.0.0";
+    $newVersionCode = $oldVersionCode + 100;
+}
+elsif (defined $upMinor) {
+    $minor = (defined $requestedVersion) ? $requestedVersion : $minor + 1;
+    $newVersion = "${major}.${minor}.0";
+    $newVersionCode = $oldVersionCode + 10;
+}
+elsif (defined $upPatch) {
+    $patch_ = (defined $requestedVersion) ? $requestedVersion : $patch_ + 1;
+    $newVersion = "${major}.${minor}.${patch_}";
+    $newVersionCode = $oldVersionCode + 1;
+}
+else {
+    usage();
+}
+
+my $rootDirectory = File::Basename::dirname(pathResolver::getAbsolutePath(File::Basename::dirname(__FILE__)));
+my $versionIncrementer = fileUpdater->new({ rootDirectory => $rootDirectory });
+
+$versionIncrementer->update('build.gradle', sub {
+    $_ = shift;
+    s/^(version\s*=\s*['"])${oldVersion}(['"])$/${1}${newVersion}$2/;
+    return $_;
+});
+
+$versionIncrementer->update('wvWare/build.gradle', sub {
+    $_ = shift;
+    s/^(\s+versionCode\s+)${oldVersionCode}$/${1}${newVersionCode}/;
+    return $_;
+});
+
+if (defined $isRelease) {
+    $versionIncrementer->update('sample-app/app/build.gradle', sub {
+        $_ = shift;
+        s/^(\s+versionName\s+['"])[\d\.]+(['"])$/${1}${oldVersion}${2}/;
+        s/^(\s+versionCode\s+)\d+$/${1}${oldVersionCode}/;
+        s/^(\s+implementation\s+['"]com\.viliussutkus89\:wvware-android\:)[\d\.]+(['"])$/${1}${oldVersion}${2}/;
+        return $_;
+    });
+
+    $versionIncrementer->update('README.md', sub {
+        $_ = shift;
+        s/(\s+implementation\s+['"]com\.viliussutkus89\:wvware-android\:)[\d\.]+(['"])/${1}${oldVersion}${2}/;
+        return $_;
+    });
+}
+
+print "::set-output name=releasedVersion::$oldVersion\n";
+print "::set-output name=releasedVersionCode::$oldVersionCode\n";
+print "::set-output name=unreleasedVersion::$newVersion\n";
+print "::set-output name=unreleasedVersionCode::$newVersionCode\n";
+
+print '::set-output name=files::build.gradle wvWare/build.gradle';
+if (defined $isRelease) {
+    print ' sample-app/app/build.gradle README.md';
+}
+print "\n";
