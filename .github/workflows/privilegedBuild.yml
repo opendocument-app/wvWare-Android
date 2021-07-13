@@ -192,7 +192,7 @@ jobs:
         id: sonatype
         # publishToSonatype.log contains a line looking like this:
         # Created staging repository 'comviliussutkus89-1055' at https://oss.sonatype.org/service/local/repositories/comviliussutkus89-1055/content/
-        run: perl -ne 'print "::set-output name=stagingRepoUri::$2\n::warning ::$1\n" if /^(Created staging repository .+ at (.+))$/' < publishToSonatype.log
+        run: perl -ne 'print "::set-output name=stagingRepoUrl::$2\n::warning ::$1\n" if /^(Created staging repository .+ at (.+))$/' < publishToSonatype.log
 
       - run: ./gradlew publishToMavenLocal
         env:
