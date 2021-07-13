@@ -183,6 +183,22 @@ jobs:
           name: maven-local
           path: ~/.m2
 
+  buildSampleApp:
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: 8
+      - uses: android-actions/setup-android@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: maven-local
+          path: ~/.m2
+
       - name: Prepare sample app for staging repository
         run: ./ci-scripts/prepareSampleAppForStagingRepository sample-app app --output=build/sampleapp-staging --repository=mavenLocal
 
