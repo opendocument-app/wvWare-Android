@@ -178,7 +178,6 @@ jobs:
 
       - run: ./gradlew publishToMavenLocal
 
-#        - run: tar -cvf maven-local.tar ~/.m2
       - uses: actions/upload-artifact@v2
         with:
           name: maven-local
