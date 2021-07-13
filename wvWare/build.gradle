@@ -92,6 +92,7 @@ task javadoc(type: Javadoc) {
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     classpath += configurations.javadocDependenciesToObtainClasspath
     title = "${rootProject.name} ${project.version} API"
+    failOnError = false
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
