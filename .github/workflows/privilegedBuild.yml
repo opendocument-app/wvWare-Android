@@ -115,49 +115,49 @@ jobs:
       - run: ./dodownloadtarballs --serial
 
       - name: Download artifacted dependencies - x86 - release
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: dependencies-Release-x86
           path: dependency-builder/build/installed/MinSizeRel/x86
 
       - name: Download artifacted dependencies - x86_64 - release
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: dependencies-Release-x86_64
           path: dependency-builder/build/installed/MinSizeRel/x86_64
 
       - name: Download artifacted dependencies - armeabi-v7a - release
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: dependencies-Release-armeabi-v7a
           path: dependency-builder/build/installed/MinSizeRel/armeabi-v7a
 
       - name: Download artifacted dependencies - arm64-v8a - release
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: dependencies-Release-arm64-v8a
           path: dependency-builder/build/installed/MinSizeRel/arm64-v8a
 
       - name: Download artifacted dependencies - x86 - debug
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: dependencies-Debug-x86
           path: dependency-builder/build/installed/Debug/x86
 
       - name: Download artifacted dependencies - x86_64 - debug
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: dependencies-Debug-x86_64
           path: dependency-builder/build/installed/Debug/x86_64
 
       - name: Download artifacted dependencies - armeabi-v7a - debug
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: dependencies-Debug-armeabi-v7a
           path: dependency-builder/build/installed/Debug/armeabi-v7a
 
       - name: Download artifacted dependencies - arm64-v8a - debug
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: dependencies-Debug-arm64-v8a
           path: dependency-builder/build/installed/Debug/arm64-v8a
@@ -165,13 +165,13 @@ jobs:
       - run: chmod +x dependency-builder/build/installed/{MinSizeRel,Debug}/{x86,x86_64,armeabi-v7a,arm64-v8a}/bin/pkg-config
 
       - name: Download artifacted wv assets
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: wv-assets
           path: dependency-builder/build/assets/wv
 
       - name: Download artifacted licenses
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v2.0.10
         with:
           name: licenses
           path: dependency-builder/build/
@@ -327,7 +327,7 @@ jobs:
           APP_SIGNING_PASS: ${{ secrets.APP_SIGNING_PASS }}
           APP_SIGNING_ALIAS: ${{ secrets.APP_SIGNING_ALIAS }}
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v2.0.10
         with:
           name: maven-local
 
