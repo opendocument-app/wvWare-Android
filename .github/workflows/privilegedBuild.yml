@@ -258,7 +258,7 @@ jobs:
           java-version: 8
       - uses: android-actions/setup-android@v2
 
-      - run: ./ci-scripts/prepareLibraryTestsForStagingRepository wvWare --output=build/lib-staging --repository=${{ needs.build.outputs.STAGING_REPO_URI }}
+      - run: ./ci-scripts/prepareLibraryTestsForStagingRepository wvWare --output=build/lib-staging --repository=${{ needs.build.outputs.STAGING_REPO_URL }}
 
       - run: ./gradlew assemble
         working-directory: build/lib-staging
