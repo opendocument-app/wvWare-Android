@@ -1,6 +1,7 @@
 package com.viliussutkus89.android.wvware.sampleapp;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -174,7 +175,11 @@ public class MainActivity extends AppCompatActivity {
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
                 intent.setDataAndType(apkUri, "text/html");
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivity(intent);
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(ctx, "HTML document generated, but failed to open HTML reader!", Toast.LENGTH_LONG).show();
+                }
             }
             else if (INTENT_SAVE == requestCode) {
                 // @TODO: could this variable be somehow passed through intent?
