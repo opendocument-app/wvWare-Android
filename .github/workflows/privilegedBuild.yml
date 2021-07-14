@@ -273,7 +273,7 @@ jobs:
 
   releaseSonatype:
     environment: ReleaseSonatype
-    needs: [build, staging]
+    needs: [build]
     runs-on: ubuntu-20.04
     outputs:
       ARTIFACTS: ${{ steps.promote.outputs.artifacts }}
