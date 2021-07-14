@@ -36,7 +36,7 @@ my $repository = 'mavenLocal';
 my $outputDirectory = 'build/lib-staging';
 my $suffix = 'aartesting';
 my $version = getVersion();
-Getopt::Long::GetOptions('repository=s' => \$repository, 'output=s' => \$outputDirectory, 'suffix=s' => \$suffix, 'help' => \$help);
+Getopt::Long::GetOptions('repository=s' => \$repository, 'output=s' => \$outputDirectory, 'suffix=s' => \$suffix, 'help' => \$help) or usage;
 if (defined $help) {
     usage();
 }

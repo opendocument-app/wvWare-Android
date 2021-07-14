@@ -34,7 +34,7 @@ my $outputDirectory = 'build/staging-app';
 my $version = getVersion();
 my $appVersion = $version . '-STAGING';
 
-Getopt::Long::GetOptions('repository=s' => \$repository, 'output=s' => \$outputDirectory, 'help' => \$help);
+Getopt::Long::GetOptions('repository=s' => \$repository, 'output=s' => \$outputDirectory, 'help' => \$help) or usage;
 if (defined $help) {
     usage();
 }

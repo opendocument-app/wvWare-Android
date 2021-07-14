@@ -31,7 +31,7 @@ my $oldVersionCode = getVersion::getVersionCode();
 my ($newVersion, $newVersionCode);
 
 my ($upMajor, $upMinor, $upPatch, $isRelease, $help, $requestedVersion);
-Getopt::Long::GetOptions(major => \$upMajor, minor => \$upMinor, patch => \$upPatch, release => \$isRelease, 'help' => \$help);
+Getopt::Long::GetOptions(major => \$upMajor, minor => \$upMinor, patch => \$upPatch, release => \$isRelease, 'help' => \$help) or usage;
 if (defined $help) {
     usage();
 }
