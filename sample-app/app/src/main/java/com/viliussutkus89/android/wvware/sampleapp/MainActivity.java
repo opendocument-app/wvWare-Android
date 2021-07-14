@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,6 +53,26 @@ public class MainActivity extends AppCompatActivity {
         // Must be defined in provider_paths.xml
         m_outputDir = new File(getCacheDir(), "produced-htmls");
         m_outputDir.mkdir();
+
+        findViewById(R.id.button_open).setOnClickListener(view -> {
+            view.setEnabled(false);
+            Intent openDocIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            openDocIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            openDocIntent.setType("application/msword");
+            startActivityForResult(openDocIntent, INTENT_OPEN);
+        });
+
+        findViewById(R.id.button_save).setOnClickListener(view -> {
+            view.setEnabled(false);
+            Intent openDocIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            openDocIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            openDocIntent.setType("application/msword");
+            startActivityForResult(openDocIntent, INTENT_SAVE);
+        });
+
+        findViewById(R.id.button_licenses).setOnClickListener(view -> {
+            startActivity(new Intent(this, OssLicensesMenuActivity.class));
+        });
     }
 
     private Boolean copyFile(InputStream input, OutputStream output) {
@@ -191,25 +210,5 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, INTENT_SAVE_RESULT_FILENAME);
             }
         }
-    }
-
-    public void handleOpenButton(View v) {
-        v.setEnabled(false);
-        Intent openDOCintent = new Intent(Intent.ACTION_GET_CONTENT);
-        openDOCintent.addCategory(Intent.CATEGORY_OPENABLE);
-        openDOCintent.setType("application/msword");
-        startActivityForResult(openDOCintent, INTENT_OPEN);
-    }
-
-    public void handleSaveButton(View v) {
-        v.setEnabled(false);
-        Intent openDOCintent = new Intent(Intent.ACTION_GET_CONTENT);
-        openDOCintent.addCategory(Intent.CATEGORY_OPENABLE);
-        openDOCintent.setType("application/msword");
-        startActivityForResult(openDOCintent, INTENT_SAVE);
-    }
-
-    public void handleShowLicenses(View v) {
-        startActivity(new Intent(this, OssLicensesMenuActivity.class));
     }
 }
