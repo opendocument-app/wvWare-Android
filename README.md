@@ -1,6 +1,5 @@
 # Android port of [wvWare](http://wvware.sourceforge.net/)
 
-![Build](https://github.com/ViliusSutkus89/wvWare-Android/workflows/Build/badge.svg)
 [![Maven Central](https://img.shields.io/maven-central/v/com.viliussutkus89/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
 
 ### Scope:
