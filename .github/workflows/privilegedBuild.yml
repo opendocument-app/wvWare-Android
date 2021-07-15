@@ -227,6 +227,11 @@ jobs:
           name: sampleapp-staging
           path: build/sampleapp-staging/app/build/outputs/apk/**/*.apk
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: sampleapp-lint-results
+          path: build/sampleapp-staging/app/build/reports/*
+
   staging:
     needs: build
     # Only macos VMs are available with exposed CPU extensions to run hardware accelerated emulator
@@ -337,7 +342,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "v${{ steps.version.outputs.releasedVersion }}"
           name: "${{ github.event.repository.name }} v${{ steps.version.outputs.releasedVersion }}"
-          artifacts: "sample-app/app/build/outputs/apk/release/*.apk,maven-local.tar"
+          artifacts: "maven-local.tar,sample-app/app/build/outputs/apk/release/*.apk,sample-app/app/build/reports/*"
           bodyFile: "UpcomingReleaseNotes.md"
 
       - uses: stefanzweifel/git-auto-commit-action@v4
