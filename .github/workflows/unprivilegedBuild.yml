@@ -209,7 +209,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: sampleapp-staging
-          path: build/sampleapp-staging/app/build/outputs/apk/debug/app-debug.apk
+          path: build/sampleapp-staging/app/build/outputs/apk/**/*.apk
 
   staging:
     needs: build
