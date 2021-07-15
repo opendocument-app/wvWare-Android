@@ -4,7 +4,7 @@
  * wvWare-Android (https://github.com/ViliusSutkus89/wvWare-Android)
  * Android port of wvWare - library to load and parse Word 2000, 97, 95 and 6 files.
  *
- * Copyright (c) 2019 Vilius Sutkus <ViliusSutkus89@gmail.com>
+ * Copyright (c) 2019 - 2021 Vilius Sutkus <ViliusSutkus89@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -27,14 +27,14 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        ndk.abiFilters = project.hasProperty('abi') ? [ project.property('abi') ] : null
+        ndk.abiFilters = project.hasProperty('abi') ? [project.property('abi')] : null
     }
     buildTypes {
         release.externalNativeBuild {
-          cmake.arguments '-DCMAKE_BUILD_TYPE=MinSizeRel'
+            cmake.arguments '-DCMAKE_BUILD_TYPE=MinSizeRel'
         }
         debug.externalNativeBuild {
-          cmake.arguments '-DBUILD_3RDPARTY_BINARIES=ON'
+            cmake.arguments '-DBUILD_3RDPARTY_BINARIES=ON'
         }
     }
     externalNativeBuild.cmake {
@@ -50,56 +50,67 @@ task touchGlibPackage(type: Exec) {
 }
 preBuild.dependsOn touchGlibPackage
 
-task gatherLicenses {
-  doLast {
-    file("$buildDir/licenses.xml").withWriter { writer ->
-        def xml = new groovy.xml.MarkupBuilder(writer)
+abstract class GatherLicenses extends DefaultTask {
+    @OutputFile
+    abstract RegularFileProperty getOutputXmlFile()
 
-        xml.doubleQuotes = true
-        xml.mkp.xmlDeclaration(version: '1.0', encoding: 'utf-8')
+    @Input
+    abstract Property<String> getInputDirectory()
 
-        xml.licenses() {
-            def addLicense = { depName, licenseFiles ->
-                license {
-                    name(depName)
-                    def urlVal = new StringBuilder()
-                    licenseFiles.each() { licenseFilename ->
-                        urlVal.append("$depName/$licenseFilename\n\n")
+    @TaskAction
+    void gather() {
+        outputXmlFile.get().asFile.withWriter { writer ->
+            def xml = new groovy.xml.MarkupBuilder(writer)
 
-                        def abi = project.hasProperty('abi') ? project.property('abi') : 'armeabi-v7a'
-                        def licenseFile = new File("$projectDir/.cxx/cmake/release/" + abi + "/$depName-prefix/src/$depName/$licenseFilename")
-                        def licenseText = licenseFile.getText('UTF-8')
-                        // LGPL2.1 and GPLv2 licenses include form feed (page break) characters.
-                        // XML does not take kindly to form feed characters.
-                        if ((depName =="wvWare") ||
-                            (depName == "freetype" && licenseFilename == "docs/GPLv2.TXT") ||
-                            (depName == "glib-2.0" && licenseFilename == "COPYING") ||
-                            (depName == "iconv" && licenseFilename == "COPYING.LIB") ||
-                            (depName == "intl" && licenseFilename == "COPYING") ||
-                            (depName == "libwmf") ||
-                            (depName == "libgsf")) {
-                            urlVal.append(licenseText.replace("\u000C", ""))
-                        } else {
-                            urlVal.append(licenseText)
+            xml.doubleQuotes = true
+            xml.mkp.xmlDeclaration(version: '1.0', encoding: 'utf-8')
+
+            xml.licenses() {
+                def addLicense = { depName, licenseFiles ->
+                    license {
+                        dependencyName(depName)
+                        def licenseTextVal = new StringBuilder()
+                        licenseFiles.each() { licenseFilename ->
+                            licenseTextVal.append("$depName/$licenseFilename\n\n")
+                            def licenseFile = new File(inputDirectory.get() + "/$depName-prefix/src/$depName/$licenseFilename")
+                            def licenseText = licenseFile.getText('UTF-8')
+                            // LGPL2.1 and GPLv2 licenses include form feed (page break) characters.
+                            // XML does not take kindly to form feed characters.
+                            if ((depName == "wvWare") ||
+                                    (depName == "freetype" && licenseFilename == "docs/GPLv2.TXT") ||
+                                    (depName == "glib-2.0" && licenseFilename == "COPYING") ||
+                                    (depName == "iconv" && licenseFilename == "COPYING.LIB") ||
+                                    (depName == "intl" && licenseFilename == "COPYING") ||
+                                    (depName == "libwmf") ||
+                                    (depName == "libgsf")) {
+                                licenseTextVal.append(licenseText.replace("\u000C", ""))
+                            } else {
+                                licenseTextVal.append(licenseText)
+                            }
+                            licenseTextVal.append("\n\n")
                         }
-                        urlVal.append("\n\n")
+                        licenseText(licenseTextVal)
                     }
-                    url(urlVal)
                 }
+                addLicense("wvWare", ["COPYING"])
+                addLicense("freetype", ["docs/LICENSE.TXT", "docs/GPLv2.TXT", "docs/FTL.TXT"])
+                addLicense("glib-2.0", ["COPYING"])
+                addLicense("iconv", ["README", "COPYING", "COPYING.LIB"])
+                addLicense("intl", ["COPYING"])
+                addLicense("libffi", ["LICENSE"])
+                addLicense("libgsf", ["COPYING", "COPYING.LIB"])
+                addLicense("libpng", ["LICENSE"])
+                addLicense("libwmf", ["COPYING"])
+                addLicense("libxml-2.0", ["Copyright"])
             }
-            addLicense("wvWare", ["COPYING"])
-            addLicense("freetype", ["docs/LICENSE.TXT", "docs/GPLv2.TXT", "docs/FTL.TXT"])
-            addLicense("glib-2.0", ["COPYING"])
-            addLicense("iconv", ["README", "COPYING", "COPYING.LIB"])
-            addLicense("intl", ["COPYING"])
-            addLicense("libffi", ["LICENSE"])
-            addLicense("libgsf", ["COPYING", "COPYING.LIB"])
-            addLicense("libpng", ["LICENSE"])
-            addLicense("libwmf", ["COPYING"])
-            addLicense("libxml-2.0", ["Copyright"])
         }
     }
-  }
+}
+
+tasks.register("gatherLicenses", GatherLicenses).configure {
+    def abi = project.hasProperty('abi') ? project.property('abi') : 'armeabi-v7a'
+    inputDirectory = "$projectDir/.cxx/cmake/release/" + abi
+    outputXmlFile = file("$buildDir/licenses.xml")
 }
 
 // wvWare has some data that is needed on runtime
@@ -134,12 +145,9 @@ task collectDebugAssetsFromShareFolder {
 tasks.whenTaskAdded {
     if (it.name == 'generateReleaseAssets') {
         it.dependsOn collectReleaseAssetsFromShareFolder
-    }
-    else if (it.name == 'generateDebugAssets') {
+    } else if (it.name == 'generateDebugAssets') {
         it.dependsOn collectDebugAssetsFromShareFolder
-    }
-    if (it.name == 'externalNativeBuildRelease') {
+    } else if (it.name == 'externalNativeBuildRelease') {
         gatherLicenses.dependsOn externalNativeBuildRelease
     }
 }
-
