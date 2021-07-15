@@ -145,6 +145,7 @@ afterEvaluate {
     }
 }
 
+//#UNCOMMENT-DURING-STAGING# /*
 tasks.whenTaskAdded { task ->
     if (task.name == 'generatePomFileForReleasePublication') {
         def gatherLicenses = tasks.getByPath(":dependency-builder:gatherLicenses")
@@ -167,3 +168,4 @@ tasks.whenTaskAdded { task ->
         }
     }
 }
+//#UNCOMMENT-DURING-STAGING# */
