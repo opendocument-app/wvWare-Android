@@ -21,6 +21,17 @@ android {
         }
     }
 
+    if (System.getenv('APP_SIGNING_KEYFILE') && System.getenv('APP_SIGNING_ALIAS') && System.getenv('APP_SIGNING_PASS')) {
+        signingConfigs {
+            release {
+                storeFile file(System.getenv('APP_SIGNING_KEYFILE'))
+                storePassword System.getenv('APP_SIGNING_PASS')
+                keyAlias System.getenv('APP_SIGNING_ALIAS')
+                keyPassword System.getenv('APP_SIGNING_PASS')
+            }
+        }
+        buildTypes.release.signingConfig signingConfigs.release
+    }
     lintOptions {
         abortOnError false
     }
