@@ -111,6 +111,7 @@ tasks.register("gatherLicenses", GatherLicenses).configure {
     def abi = project.hasProperty('abi') ? project.property('abi') : 'armeabi-v7a'
     inputDirectory = "$projectDir/.cxx/cmake/release/" + abi
     outputXmlFile = file("$buildDir/licenses.xml")
+    onlyIf { !file("$buildDir/licenses.xml").exists() }
 }
 
 // wvWare has some data that is needed on runtime
