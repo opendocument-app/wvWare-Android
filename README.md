@@ -50,5 +50,5 @@ Debug build of sample application is available in [Releases Page](https://github
 * Meson Build system
 * pkg-config
 * CMake-3.10.2
-* ndk-22.0.7026061
+* ndk-22.1.7171670
 

@@ -9,7 +9,7 @@ on:
       - '.github/workflows/unprivilegedBuild.yml'
 
 env:
-  ANDROID_NDK:        "22.0.7026061"
+  ANDROID_NDK:        "22.1.7171670"
   ANDROID_CMAKE:      "3.10.2.4988404"
   TARBALL_CACHE_KEY:  "tarballs-key-2"
 
