@@ -9,7 +9,7 @@ Currently limited to wvHtml.
 [sample-app/app/build.gradle](sample-app/app/build.gradle) contains code to load the library as a dependency in Gradle.
 ```gradle
 dependencies {
-    implementation 'com.viliussutkus89:wvware-android:1.2.5'
+    implementation 'com.viliussutkus89:wvware-android:1.2.6'
 }
 ```
 
