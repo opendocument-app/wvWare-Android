@@ -38,7 +38,7 @@ jobs:
           - buildType: Release
             CMakeBuildType: MinSizeRel
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           lfs: true
       - uses: actions/setup-java@v2
@@ -98,7 +98,7 @@ jobs:
     outputs:
       STAGING_REPO_URL: ${{ steps.sonatype.outputs.stagingRepoUrl }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-java@v2
         with:
           distribution: zulu
@@ -208,7 +208,7 @@ jobs:
     needs: build
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-java@v2
         with:
           distribution: zulu
@@ -255,7 +255,7 @@ jobs:
           - api-level: 30
             target: default
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: actions/setup-java@v2
         with:
@@ -298,7 +298,7 @@ jobs:
       contents: write
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           # A branch is required for post release version increment commit
           ref: ${{ github.event.ref }}
