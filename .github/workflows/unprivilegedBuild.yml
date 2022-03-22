@@ -50,7 +50,7 @@ jobs:
       - run: sudo -H pip3 install meson
 
       - name: Cache tarballs
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: ${{ env.TARBALL_CACHE_KEY }}
           path: dependency-builder/src/main/cpp/tarballs
@@ -104,7 +104,7 @@ jobs:
       - run: sdkmanager "ndk;${{env.ANDROID_NDK}}" "cmake;${{env.ANDROID_CMAKE}}"
 
       - name: Cache tarballs
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: ${{ env.TARBALL_CACHE_KEY }}
           path: dependency-builder/src/main/cpp/tarballs
