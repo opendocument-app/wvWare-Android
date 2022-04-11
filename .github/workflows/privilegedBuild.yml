@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 8
@@ -99,7 +99,7 @@ jobs:
       STAGING_REPO_URL: ${{ steps.sonatype.outputs.stagingRepoUrl }}
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 8
@@ -209,7 +209,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 8
@@ -257,7 +257,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 8
@@ -303,7 +303,7 @@ jobs:
           # A branch is required for post release version increment commit
           ref: ${{ github.event.ref }}
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 8
