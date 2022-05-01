@@ -14,17 +14,6 @@ dependencies {
 }
 ```
 
-wvWare-Android is distributed using [Maven Central](https://search.maven.org/artifact/com.viliussutkus89/wvware-android) repository.  
-It needs be added to [top level build.gradle](sampleapp/build.gradle)
-```gradle
-allprojects {
-  repositories {
-      // ...
-      mavenCentral()
-  }
-}
-```
-
 ### Usage:
 Library is interfaced through Java.
 ```Java
