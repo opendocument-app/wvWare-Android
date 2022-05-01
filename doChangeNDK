@@ -16,4 +16,4 @@ expression="s/ndk-$version_format/ndk-$NDK/"
 sed -E "--expression=$expression" -i $BASEDIR/README.md
 
 expression="s/ndkVersion \"$version_format\"/ndkVersion \"$NDK\"/"
-sed -E "--expression=$expression" -i $BASEDIR/wvWare/build.gradle $BASEDIR/dependency-builder/build.gradle $BASEDIR/sample-app/app/build.gradle
+sed -E "--expression=$expression" -i $BASEDIR/wvWare/build.gradle $BASEDIR/dependency-builder/build.gradle $BASEDIR/sampleapp/app/build.gradle

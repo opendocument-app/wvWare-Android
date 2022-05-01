@@ -23,6 +23,6 @@ rm_file_if_exists wvWare-Android.iml
 rm_file_if_exists dependency-builder/dependency-builder.iml
 rm_file_if_exists wvWare/wvWare.iml
 
-rm_folder_if_exists sample-app/.idea
-rm_file_if_exists sample-app/app.iml
+rm_folder_if_exists sampleapp/.idea
+rm_file_if_exists sampleapp/app.iml
 

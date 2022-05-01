@@ -27,7 +27,7 @@ rm_folder_if_exists dependency-builder/build
 rm_folder_if_exists wvWare/.cxx
 rm_folder_if_exists wvWare/build
 
-rm_folder_if_exists sample-app/.gradle
-rm_folder_if_exists sample-app/build
-rm_folder_if_exists sample-app/app/build
+rm_folder_if_exists sampleapp/.gradle
+rm_folder_if_exists sampleapp/build
+rm_folder_if_exists sampleapp/app/build
 

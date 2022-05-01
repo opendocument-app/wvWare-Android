@@ -76,7 +76,7 @@ $versionIncrementer->update('wvWare/build.gradle', sub {
 });
 
 if (defined $isRelease) {
-    $versionIncrementer->update('sample-app/app/build.gradle', sub {
+    $versionIncrementer->update('sampleapp/app/build.gradle', sub {
         $_ = shift;
         s/^(\s+versionName\s+['"])[\d\.]+(['"])$/${1}${oldVersion}${2}/;
         s/^(\s+versionCode\s+)\d+$/${1}${oldVersionCode}/;
@@ -98,6 +98,6 @@ print "::set-output name=unreleasedVersionCode::$newVersionCode\n";
 
 print '::set-output name=files::build.gradle wvWare/build.gradle';
 if (defined $isRelease) {
-    print ' sample-app/app/build.gradle README.md';
+    print ' sampleapp/app/build.gradle README.md';
 }
 print "\n";

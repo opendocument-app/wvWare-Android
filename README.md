@@ -6,7 +6,7 @@
 Currently limited to wvHtml.
 
 ### How to install:
-[sample-app/app/build.gradle](sample-app/app/build.gradle) contains code to load the library as a dependency in Gradle.
+[sampleapp/app/build.gradle](sampleapp/app/build.gradle) contains code to load the library as a dependency in Gradle.
 ```gradle
 dependencies {
     implementation 'com.viliussutkus89:wvware-android:1.2.6'
@@ -14,7 +14,7 @@ dependencies {
 ```
 
 wvWare-Android is distributed using [Maven Central](https://search.maven.org/artifact/com.viliussutkus89/wvware-android) repository.  
-It needs be added to [top level build.gradle](sample-app/build.gradle)
+It needs be added to [top level build.gradle](sampleapp/build.gradle)
 ```gradle
 allprojects {
   repositories {
@@ -41,7 +41,7 @@ java.io.File outputHTML = new wvWare(getApplicationContext()).setInputDOC(input)
 
 Library needs Android Context to obtain path to cache directory and asset files, which are supplied in .aar.
 
-### [Sample application](/sample-app)
+### [Sample application](/sampleapp)
 Example demonstrates how to convert DOC files to HTML and either open the result in browser or save to storage.
 Storage Access Framework (SAF) is used for file management, it requires API level 19 (KitKat).
 Debug build of sample application is available in [Releases Page](https://github.com/ViliusSutkus89/wvWare-Android/releases)

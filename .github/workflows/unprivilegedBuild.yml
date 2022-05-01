@@ -199,7 +199,7 @@ jobs:
           path: ~/.m2
 
       - name: Prepare sample app for staging repository
-        run: ./ci-scripts/prepareSampleAppForStagingRepository sample-app app --output=build/sampleapp-staging --repository=mavenLocal
+        run: ./ci-scripts/prepareSampleAppForStagingRepository sampleapp app --output=build/sampleapp-staging --repository=mavenLocal
 
       - name: Build sample app from staging library
         run: ./gradlew build

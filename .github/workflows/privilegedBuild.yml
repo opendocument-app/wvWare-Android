@@ -216,7 +216,7 @@ jobs:
       - uses: android-actions/setup-android@v2
 
       - name: Prepare sample app for staging repository
-        run: ./ci-scripts/prepareSampleAppForStagingRepository sample-app app --output=build/sampleapp-staging --repository=${{ needs.build.outputs.STAGING_REPO_URL }}
+        run: ./ci-scripts/prepareSampleAppForStagingRepository sampleapp app --output=build/sampleapp-staging --repository=${{ needs.build.outputs.STAGING_REPO_URL }}
 
       - name: Build sample app from staging library
         run: ./gradlew build
@@ -326,7 +326,7 @@ jobs:
 
       - name: Build sample app from released library
         run: ./gradlew build
-        working-directory: sample-app
+        working-directory: sampleapp
         env:
           APP_SIGNING_KEYFILE: ${{ steps.decodeKeystore.outputs.APP_SIGNING_KEYFILE }}
           APP_SIGNING_PASS: ${{ secrets.APP_SIGNING_PASS }}
@@ -342,7 +342,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "v${{ steps.version.outputs.releasedVersion }}"
           name: "${{ github.event.repository.name }} v${{ steps.version.outputs.releasedVersion }}"
-          artifacts: "maven-local.tar,sample-app/app/build/outputs/apk/release/*.apk,sample-app/app/build/reports/*"
+          artifacts: "maven-local.tar,sampleapp/app/build/outputs/apk/release/*.apk,sampleapp/app/build/reports/*"
           bodyFile: "UpcomingReleaseNotes.md"
 
       - uses: stefanzweifel/git-auto-commit-action@v4
