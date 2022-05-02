@@ -1,0 +1,137 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group = 'com.viliussutkus89.licenseOnly'
+
+android {
+    compileSdk 32
+    defaultConfig {
+        minSdk 16
+        targetSdk 32
+
+        versionCode 1
+        versionName 'v0.2.12'
+    }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                artifactId project.name
+                version = android.defaultConfig.versionName
+
+                pom {
+                    name = project.name
+                    description = 'library for converting metafiles'
+                    url = 'https://github.com/caolanm/libwmf'
+                    packaging = 'aar'
+                    inceptionYear = '2001'
+                    licenses {
+                        license {
+                            name = 'GPLv2'
+                            url = 'https://github.com/caolanm/libwmf/blob/v0.2.12/COPYING'
+                            distribution = 'repo'
+                        }
+                    }
+                    scm {
+                        url = 'https://github.com/caolanm/libwmf'
+                        connection = 'https://github.com/caolanm/libwmf.git'
+                    }
+                    developers {
+                        // Developer list obtained from:
+                        // https://github.com/caolanm/libwmf/blob/v0.2.12/CREDITS
+                        developer {
+                            name = 'Thomas Boutell'
+                        }
+                        developer {
+                            id = 'allegro'
+                        }
+                        developer {
+                            id = 'Gdtclft'
+                        }
+                        developer {
+                            id = 'wine'
+                        }
+                        developer {
+                            name = 'Bjorn Reese'
+                        }
+                        developer {
+                            name = 'Daniel Stenberg'
+                        }
+                        developer {
+                            name = 'Caolan McNamara'
+                        }
+                        developer {
+                            name = 'Francis James Franklin'
+                        }
+                        developer {
+                            name = 'David Airlie'
+                        }
+                        developer {
+                            name = 'Frédéric Vivien'
+                        }
+                        developer {
+                            name = 'Martin Vermeer'
+                        }
+                        developer {
+                            name = 'Bob Friesenhahn'
+                        }
+                        developer {
+                            name = 'Raj Manandhar'
+                        }
+                        developer {
+                            name = 'Steven Michael Robbins'
+                        }
+                        developer {
+                            name = 'Steven Michael Robbins'
+                        }
+                        developer {
+                            name = 'Bob Bell'
+                        }
+                        developer {
+                            name = 'Albert Chin'
+                        }
+                        developer {
+                            name = 'Matej Vila'
+                        }
+                        developer {
+                            name = 'Benjamin Geer'
+                        }
+                        developer {
+                            name = 'Peter Ohlerich'
+                        }
+                        developer {
+                            name = 'Steve Oney'
+                        }
+                        developer {
+                            name = 'Michael Cree'
+                        }
+                        developer {
+                            name = 'Dom Lachowicz'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (System.getenv('SIGNING_KEY')) {
+        signing {
+            required { true }
+            useInMemoryPgpKeys(System.getenv('SIGNING_KEY'), System.getenv('SIGNING_PASS'))
+            sign publishing.publications.release
+        }
+    }
+}

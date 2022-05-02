@@ -1,0 +1,31 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}
+rootProject.name = 'licenseOnly'
+
+include ':wvWare-Android-dependency-tree'
+include ':wvWare'
+
+include ':libgsf'
+include ':libpng'
+include ':libwmf'
+
+include ':GLib'
+include ':libxml'
+include ':FreeType'
+
+include ':libiconv'
+include ':libffi'
+include ':proxy-libintl'
