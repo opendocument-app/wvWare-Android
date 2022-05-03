@@ -4,7 +4,7 @@ set -eu
 THIS_FILE=$(readlink -f "$0")
 BASEDIR=$(dirname "$THIS_FILE")
 
-NDK="22.1.7171670"
+NDK="23.1.7779620"
 
 version_format='([0-9\.]+)'
 
