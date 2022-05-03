@@ -69,14 +69,14 @@ jobs:
           mv dependency-builder/build/installed/${{ matrix.CMakeBuildType }}/${{ matrix.abi }}/lib pdeps/
 
       - name: Artifact built dependencies
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dependencies-${{ matrix.buildType }}-${{ matrix.abi }}
           path: pdeps
 
       - name: Artifact assets
         if: matrix.abi == 'armeabi-v7a' && matrix.buildType == 'Release'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: wv-assets
           path: dependency-builder/build/assets/wv
@@ -162,7 +162,7 @@ jobs:
 
       - run: ./gradlew publishToMavenLocal
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: maven-local
           path: ~/.m2
@@ -190,12 +190,12 @@ jobs:
         run: ./gradlew build
         working-directory: build/sampleapp-staging
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: sampleapp-staging
           path: build/sampleapp-staging/app/build/outputs/apk/**/*.apk
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: app-lint-results
           path: build/sampleapp-staging/app/build/reports/*
