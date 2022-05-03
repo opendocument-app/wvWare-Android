@@ -60,16 +60,6 @@ jobs:
       - name: Build dependencies of wvWare-Android
         run: ./gradlew dependency-builder:assemble${{ matrix.buildType }} -PdisablePreDex -Pabi=${{ matrix.abi }}
 
-      - name: Gather licenses
-        if: matrix.abi == 'armeabi-v7a' && matrix.buildType == 'Release'
-        run: ./gradlew dependency-builder:gatherLicenses -PdisablePreDex -Pabi=${{ matrix.abi }}
-
-      - name: Artifact gathered licenses
-        if: matrix.abi == 'armeabi-v7a' && matrix.buildType == 'Release'
-        uses: actions/upload-artifact@v2
-        with:
-          name: licenses
-          path: dependency-builder/build/licenses.xml
 
       - name: Prepare built dependencies for artifacting
         run: |
@@ -167,11 +157,6 @@ jobs:
           name: wv-assets
           path: dependency-builder/build/assets/wv
 
-      - name: Download artifacted licenses
-        uses: actions/download-artifact@v1
-        with:
-          name: licenses
-          path: dependency-builder/build/
 
       - run: ./gradlew assembleRelease -PdisablePreDex
 
