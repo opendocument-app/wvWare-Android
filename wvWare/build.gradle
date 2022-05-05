@@ -121,6 +121,13 @@ afterEvaluate {
                         url = 'https://github.com/ViliusSutkus89/wvWare-Android'
                         connection = 'https://github.com/ViliusSutkus89/wvWare-Android.git'
                     }
+                    licenses {
+                        license {
+                            name = 'GPLv3'
+                            url = 'https://www.gnu.org/licenses/gpl-3.0.html'
+                            distribution = 'repo'
+                        }
+                    }
                 }
             }
         }
