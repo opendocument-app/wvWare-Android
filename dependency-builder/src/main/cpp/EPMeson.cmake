@@ -3,7 +3,7 @@
 # pdf2htmlEX-Android (https://github.com/ViliusSutkus89/pdf2htmlEX-Android)
 # Android port of pdf2htmlEX - Convert PDF to HTML without losing text or format.
 #
-# Copyright (c) 2019 Vilius Sutkus <ViliusSutkus89@gmail.com>
+# Copyright (c) 2019 - 2021 Vilius Sutkus <ViliusSutkus89@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -23,19 +23,15 @@ include(CompilerBinaries.cmake)
 
 if (ANDROID)
   if(ANDROID_ABI STREQUAL armeabi-v7a)
-    SET(MESON_SYSTEM "android-arm")
     SET(MESON_CPU_FAMILY "arm")
     SET(MESON_CPU "armv7-a")
   elseif(ANDROID_ABI STREQUAL arm64-v8a)
-    SET(MESON_SYSTEM "android-aarch64")
     SET(MESON_CPU_FAMILY "aarch64")
     SET(MESON_CPU "aarch64")
   elseif(ANDROID_ABI STREQUAL x86)
-    SET(MESON_SYSTEM "android-x86")
     SET(MESON_CPU_FAMILY "x86")
     SET(MESON_CPU "i686")
   elseif(ANDROID_ABI STREQUAL x86_64)
-    SET(MESON_SYSTEM "android-x86_64")
     SET(MESON_CPU_FAMILY "x86_64")
     SET(MESON_CPU "x86_64")
   else()
@@ -55,20 +51,7 @@ if (MESON_CROSS_COMPILE_FILE AND NOT EXISTS ${MESON_CROSS_COMPILE_FILE})
 endif()
 
 function(ExternalProjectMeson EXTERNAL_PROJECT_NAME)
-  set(options)
-  set(oneValueArgs URL URL_HASH)
-  set(multipleValueArgs DEPENDS CONFIGURE_ARGUMENTS EXTRA_ARGUMENTS)
-  cmake_parse_arguments(EP "${options}" "${oneValueArgs}" "${multipleValueArgs}" ${ARGN})
-
-  FilterDependsList(EP_DEPENDS)
-  CheckIfPackageAlreadyBuilt(${EXTERNAL_PROJECT_NAME})
-  if ("${${EXTERNAL_PROJECT_NAME}_FOUND}")
-    return()
-  endif()
-
-  CheckIfTarballCachedLocally(${EXTERNAL_PROJECT_NAME} EP_URL)
-  CheckIfSourcePatchExists(${EXTERNAL_PROJECT_NAME} EP_PATCH_SOURCE_COMMAND)
-  CheckIfInstallPatchExists(${EXTERNAL_PROJECT_NAME} EP_PATCH_INSTALL_COMMAND)
+  ExternalProjectHeaderBoilerplate(${ARGN})
 
   if (CMAKE_BUILD_TYPE STREQUAL Debug)
     set(MESON_BUILD_TYPE debug)
@@ -100,13 +83,13 @@ function(ExternalProjectMeson EXTERNAL_PROJECT_NAME)
     INCLUDE=${THIRDPARTY_PREFIX}/include
 
     PATH=${MESON_PATH}
-  )
+    )
 
   set(EP_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E env ${MESON_ENV}
     meson --buildtype ${MESON_BUILD_TYPE}
     ${CMAKE_CURRENT_BINARY_DIR}/${EXTERNAL_PROJECT_NAME}-prefix/src/${EXTERNAL_PROJECT_NAME}
     ${CMAKE_CURRENT_BINARY_DIR}/${EXTERNAL_PROJECT_NAME}-prefix/src/${EXTERNAL_PROJECT_NAME}-build
-  )
+    )
 
   if(MESON_CROSS_COMPILE_FILE)
     LIST(APPEND EP_CONFIGURE_COMMAND --cross-file ${MESON_CROSS_COMPILE_FILE})
@@ -136,6 +119,6 @@ function(ExternalProjectMeson EXTERNAL_PROJECT_NAME)
     LOG_CONFIGURE 1
     LOG_BUILD 1
     LOG_INSTALL 1
-  )
+    )
 endfunction(ExternalProjectMeson EXTERNAL_PROJECT_NAME)
 

@@ -1,16 +1,43 @@
 #!/usr/bin/env perl
+#  MIT License
+#
+#  Copyright (c) 2021, 2022 Vilius Sutkus '89 <ViliusSutkus89@gmail.com>
+#
+#  https://github.com/ViliusSutkus89/Sample_Android_Library-MavenCentral-Instrumented_Tests
+#  ci-scripts/getVersion - v2.0.0
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all
+#  copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#  SOFTWARE.
+#
 # ci-scripts/lib/getVersion.pm is symlinked to ci-scripts/getVersion
 # This is needed to make this script both a module and a script.
+
 package getVersion;
 use strict;
 use warnings;
 
 use base 'Exporter';
-our $VERSION = '1.03';
+our $VERSION = '2.0.0';
 our @EXPORT = qw(getVersion);
-our @EXPORT_OK = qw(getVersionCode);
+our @EXPORT_OK = qw(getVersionCode getAppVersionCode getAppVersion getAppReleaseNumber);
 
 use File::Basename 'dirname';
+use Getopt::Long;
 sub getLibDir {
     my $thisDir = File::Basename::dirname(__FILE__);
     if ('lib' ne substr($thisDir, -3)) {
@@ -41,8 +68,50 @@ sub getVersionCode {
     return $versionCode;
 }
 
+sub getAppVersion {
+    my ($appVersion) = fileParser::grepSingleLine(
+        pathResolver::getAbsolutePath($rootDir . '/sampleapp/app/build.gradle'),
+        qr/versionName\s+["'](\d+\.\d+\.\d+(?:\.\d+)?)["']$/
+    );
+    return $appVersion;
+}
+
+sub getAppReleaseNumber {
+    my ($appReleaseNumber) = fileParser::grepSingleLine(
+        pathResolver::getAbsolutePath($rootDir . '/sampleapp/app/build.gradle'),
+        qr/versionName\s+["']\d+\.\d+\.\d+(?:\.(\d+))?["']$/
+    );
+    # App Release Number may or may not be available
+    # Default to 0 if not available (migrating from old format)
+    if (!defined $appReleaseNumber) {
+        $appReleaseNumber = 0;
+    }
+    return $appReleaseNumber;
+}
+
+sub getAppVersionCode {
+    my ($versionCode) = fileParser::grepSingleLine(
+        pathResolver::getAbsolutePath($rootDir . '/sampleapp/app/build.gradle'),
+        qr/versionCode\s+(\d+)\s*$/
+    );
+    return $versionCode;
+}
+
 if (not caller()) {
-    print getVersion(), "\n";
+    my ($application, $ci);
+    Getopt::Long::GetOptions(application => \$application, ci => \$ci);
+    if (defined $ci) {
+        print "::set-output name=version::", getVersion(), "\n";
+        print "::set-output name=versionCode::", getVersionCode(), "\n";
+
+        print "::set-output name=appVersion::", getAppVersion(), "\n";
+        print "::set-output name=appVersionCode:", getAppVersionCode(), "\n";
+    }
+    elsif (defined $application) {
+        print getAppVersion(), "\n";
+    } else {
+        print getVersion(), "\n";
+    }
 }
 
 1;

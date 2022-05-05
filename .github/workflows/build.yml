@@ -3,7 +3,8 @@
 #  Copyright (c) 2021 - 2022 ViliusSutkus89.com
 #
 #  https://github.com/ViliusSutkus89/Sample_Android_Library-MavenCentral-Instrumented_Tests
-#  .github/workflows/unprivilegedBuild.yml - v2.2.0
+#  .github/workflows/build.yml - v2.2.0
+#  Renamed from .github/workflows/privilegedBuild.yml
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -23,21 +24,15 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-name: unprivilegedBuild
+name: build
 on:
   workflow_dispatch:
   push:
-    branches-ignore: [ master ]
+    branches: [ master ]
     paths-ignore:
       - '**.md'
       - '.github/**'
-      - '!.github/workflows/unprivilegedBuild.yml'
-      - 'licenseOnly/**'
-  pull_request:
-    paths-ignore:
-      - '**.md'
-      - '.github/**'
-      - '!.github/workflows/unprivilegedBuild.yml'
+      - '!.github/workflows/privilegedBuild.yml'
       - 'licenseOnly/**'
 
 env:
@@ -58,6 +53,9 @@ permissions:
 jobs:
   buildLibrary:
     if: "!contains(github.event.head_commit.message, '[SkipCI]') && !contains(github.event.head_commit.message, '[AppOnly]')"
+    environment: LibraryKeyAndSonatypeAccess
+    outputs:
+      STAGING_REPO_URL: ${{ steps.sonatype.outputs.stagingRepoUrl }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -76,7 +74,20 @@ jobs:
           path: dependency-builder/src/main/cpp/tarballs
       - run: ./dodownloadtarballs --serial
 
-      - run: ./gradlew lintRelease publishToMavenLocal
+      - run: ./gradlew lintRelease publishToMavenLocal publishToSonatype closeSonatypeStagingRepository | tee publishToSonatype.log
+        # bash has pipefail on by default, which is needed for tee to fail, if gradle fails
+        shell: bash
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASS: ${{ secrets.SIGNING_PASS }}
+
+      - name: Parse Sonatype repository
+        id: sonatype
+        # publishToSonatype.log contains a line looking like this:
+        # Created staging repository 'comviliussutkus89-1055' at https://oss.sonatype.org/service/local/repositories/comviliussutkus89-1055/content/
+        run: perl -ne 'print "::set-output name=stagingRepoUrl::$2\n::warning ::$1\n" if /^(Created staging repository .+ at (.+))$/' < publishToSonatype.log
 
       - uses: actions/upload-artifact@v3
         if: always()
@@ -94,10 +105,11 @@ jobs:
           path: wvWare/build/reports/lint-results-release.html
           if-no-files-found: error
 
+      - run: tar -cvf maven-local.tar ~/.m2
       - uses: actions/upload-artifact@v3
         with:
-          name: maven-local
-          path: ~/.m2
+          name: maven-local.tar
+          path: maven-local.tar
           if-no-files-found: error
 
   runInstrumentedTests:
@@ -132,13 +144,27 @@ jobs:
           java-version: 11
       - uses: android-actions/setup-android@v2
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: maven-local
-          path: ~/.m2
+      - run: ./ci-scripts/prepareLibraryTestsForStagingRepository wvWare --output=build/lib-staging --repository=${{ needs.buildLibrary.outputs.STAGING_REPO_URL }}
 
-      - name: Prepare library to run instrumented tests on staging library
-        run: ./ci-scripts/prepareLibraryTestsForStagingRepository wvWare --output=build/lib-staging --repository=mavenLocal
+      - name: Android Virtual Device (AVD) cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.arch }}-${{ matrix.api-level }}-${{ matrix.api-type-target }}
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: ${{ matrix.arch }}
+          target: ${{ matrix.api-type-target }}
+          sdcard-path-or-size: 1G
+          disk-size: 8G
+          script: echo "Generated AVD snapshot for caching."
 
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -176,8 +202,9 @@ jobs:
           path: build/lib-staging/testResults
           if-no-files-found: error
 
-  buildSampleAppAgainstUnreleasedLibrary:
+  buildSampleAppAgainstUnReleasedLibrary:
     needs: buildLibrary
+    environment: SampleAppKeystore
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -187,17 +214,23 @@ jobs:
           java-version: 11
       - uses: android-actions/setup-android@v2
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: maven-local
-          path: ~/.m2
-
       - name: Prepare sample app for staging repository
-        run: ./ci-scripts/prepareSampleAppForStagingRepository sampleapp app --output=build/sampleapp-staging --repository=mavenLocal
+        run: ./ci-scripts/prepareSampleAppForStagingRepository sampleapp app --output=build/sampleapp-staging --repository=${{ needs.buildLibrary.outputs.STAGING_REPO_URL }}
+
+      - id: decodeSampleAppKeystore
+        run: |
+          echo "${{ env.APP_SIGNING_KEYFILE_BASE64 }}" | base64 --decode - > "$HOME/com.viliussutkus89.android.wvware.sampleapp.jks"
+          echo "::set-output name=APP_SIGNING_KEYFILE::$HOME/com.viliussutkus89.android.wvware.sampleapp.jks"
+        env:
+          APP_SIGNING_KEYFILE_BASE64: ${{ secrets.APP_SIGNING_KEYFILE_BASE64 }}
 
       - name: Build and lint sample app from staging library
         run: ./gradlew build lintRelease
         working-directory: build/sampleapp-staging
+        env:
+          APP_SIGNING_KEYFILE: ${{ steps.decodeSampleAppKeystore.outputs.APP_SIGNING_KEYFILE }}
+          APP_SIGNING_PASS: ${{ secrets.APP_SIGNING_PASS }}
+          APP_SIGNING_ALIAS: ${{ secrets.APP_SIGNING_ALIAS }}
 
       - uses: actions/upload-artifact@v3
         with:
@@ -207,12 +240,13 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: sampleapp-lint-report
+          name: sampleapp-staging-lint-report
           path: build/sampleapp-staging/app/build/reports/lint-results-release.html
           if-no-files-found: error
 
   buildSampleAppAgainstReleasedLibrary:
     if: "!contains(github.event.head_commit.message, '[SkipCI]') && contains(github.event.head_commit.message, '[AppOnly]')"
+    environment: SampleAppKeystore
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -222,8 +256,19 @@ jobs:
           java-version: 11
       - uses: android-actions/setup-android@v2
 
+      - id: decodeSampleAppKeystore
+        run: |
+          echo "${{ env.APP_SIGNING_KEYFILE_BASE64 }}" | base64 --decode - > "$HOME/com.viliussutkus89.android.wvware.sampleapp.jks"
+          echo "::set-output name=APP_SIGNING_KEYFILE::$HOME/com.viliussutkus89.android.wvware.sampleapp.jks"
+        env:
+          APP_SIGNING_KEYFILE_BASE64: ${{ secrets.APP_SIGNING_KEYFILE_BASE64 }}
+
       - run: ./gradlew build lintRelease
         working-directory: sampleapp
+        env:
+          APP_SIGNING_KEYFILE: ${{ steps.decodeSampleAppKeystore.outputs.APP_SIGNING_KEYFILE }}
+          APP_SIGNING_PASS: ${{ secrets.APP_SIGNING_PASS }}
+          APP_SIGNING_ALIAS: ${{ secrets.APP_SIGNING_ALIAS }}
 
       - uses: actions/upload-artifact@v3
         with:
@@ -234,5 +279,5 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: sampleapp-lint-report
-          path: mv sampleapp/app/build/reports/lint-results-release.html
+          path: sampleapp/app/build/reports/lint-results-release.html
           if-no-files-found: error

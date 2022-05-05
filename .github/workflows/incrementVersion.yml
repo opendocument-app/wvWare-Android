@@ -1,9 +1,9 @@
 #  MIT License
 #
-#  Copyright (c) 2021 Vilius Sutkus <ViliusSutkus89@gmail.com>
+#  Copyright (c) 2021 - 2022 ViliusSutkus89.com
 #
 #  https://github.com/ViliusSutkus89/Sample_Android_Library-MavenCentral-Instrumented_Tests
-#  ci-scripts/lib/fileParser.pm - v1.1.5
+#  .github/workflows/incrementVersion.yml - v2.2.0
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,31 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
-#
-package repositoryInputParser;
-use strict;
-use warnings;
 
-use base 'Exporter';
-our $VERSION = '1.01';
-our @EXPORT = qw(parseRepository);
+name: incrementVersion
+on:
+  workflow_dispatch:
+    inputs:
+      ARGUMENTS:
+        description: 'arguments to ci-scripts/incrementVersion: --major | --minor | --patch | --application'
+        required: true
 
-sub parseRepository {
-    my $repository = shift;
-    if ($repository eq 'mavenLocal') {
-        $repository = 'mavenLocal()';
-    }
-    elsif (index($repository, 'https://') == 0 || index($repository, 'http://') == 0) {
-        $repository = "maven { url '$repository' }";
-    }
-    else {
-        print STDERR "Malformed repository: '$repository'!\n";
-        $repository = undef;
-    }
-    return $repository;
-}
+jobs:
+  incrementVersion:
+    permissions:
+      # Needed to make a version increment commit
+      contents: write
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # A branch is required for post release version increment commit
+          ref: ${{ github.event.ref }}
+
+      - run: ./ci-scripts/incrementVersion ${{ github.event.inputs.ARGUMENTS }}
+        id: version
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Increment version"
+          file_pattern: ${{ steps.version.outputs.files }}

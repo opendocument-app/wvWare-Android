@@ -67,8 +67,10 @@ public final class wvWare {
     Tmpfile.init(ctx.getCacheDir());
     System.loadLibrary("wvware-android");
 
+    LegacyCleanup.cleanup(ctx);
+
     AssetExtractor ae = new AssetExtractor(ctx.getAssets()).setNoOverwrite();
-    setDataDir(ae.extract(ctx.getFilesDir(), "wv").getAbsolutePath());
+    setDataDir(ae.extract(ctx.getFilesDir(), "wvWare/share/wv").getAbsolutePath());
 
     this.m_outputDir = new File(ctx.getCacheDir(), "wvWare");
     this.m_outputDir.mkdir();

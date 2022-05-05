@@ -3,7 +3,7 @@
 # pdf2htmlEX-Android (https://github.com/ViliusSutkus89/pdf2htmlEX-Android)
 # Android port of pdf2htmlEX - Convert PDF to HTML without losing text or format.
 #
-# Copyright (c) 2019 Vilius Sutkus <ViliusSutkus89@gmail.com>
+# Copyright (c) 2019 - 2021 Vilius Sutkus <ViliusSutkus89@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -52,24 +52,12 @@ if(DEFINED CMAKE_TOOLCHAIN_FILE)
 endif()
 
 function(ExternalProjectCMake EXTERNAL_PROJECT_NAME)
-  set(options)
-  set(oneValueArgs URL URL_HASH)
-  set(multipleValueArgs DEPENDS CONFIGURE_ARGUMENTS EXTRA_ARGUMENTS)
-  cmake_parse_arguments(EP "${options}" "${oneValueArgs}" "${multipleValueArgs}" ${ARGN})
-
-  FilterDependsList(EP_DEPENDS)
-  CheckIfPackageAlreadyBuilt(${EXTERNAL_PROJECT_NAME})
-  if ("${${EXTERNAL_PROJECT_NAME}_FOUND}")
-    return()
-  endif()
-
-  CheckIfTarballCachedLocally(${EXTERNAL_PROJECT_NAME} EP_URL)
-  CheckIfSourcePatchExists(${EXTERNAL_PROJECT_NAME} EP_PATCH_SOURCE_COMMAND)
-  CheckIfInstallPatchExists(${EXTERNAL_PROJECT_NAME} EP_PATCH_INSTALL_COMMAND)
+  ExternalProjectHeaderBoilerplate(${ARGN})
 
   GetCMakeArguments("EP_CMAKE_ARGUMENTS"
     FORCED_ARGUMENTS "CMAKE_VERBOSE_MAKEFILE" "CMAKE_BUILD_TYPE"
-    IGNORED_ARGUMENTS "CMAKE_LIBRARY_OUTPUT_DIRECTORY" "CMAKE_TOOLCHAIN_FILE" )
+    IGNORED_ARGUMENTS "CMAKE_LIBRARY_OUTPUT_DIRECTORY" "CMAKE_RUNTIME_OUTPUT_DIRECTORY" "CMAKE_TOOLCHAIN_FILE"
+    "CMAKE_FIND_ROOT_PATH" "CMAKE_PREFIX_PATH" "CMAKE_INSTALL_PREFIX" )
 
   if (NOT BUILD_SHARED_LIBS)
     SET(SHARED_LIBS_ARGUMENT -DBUILD_SHARED_LIBS=OFF)
@@ -81,19 +69,14 @@ function(ExternalProjectCMake EXTERNAL_PROJECT_NAME)
 
   ExternalProject_Add(${EXTERNAL_PROJECT_NAME}
     ${EP_DEPENDS}
+
     URL ${EP_URL}
     URL_HASH ${EP_URL_HASH}
 
     CMAKE_ARGS ${EP_CMAKE_ARGUMENTS}
-      ${ToolchainWrapper}
-      -DCMAKE_PREFIX_PATH=${THIRDPARTY_PREFIX}
-      -DCMAKE_INSTALL_PREFIX=${THIRDPARTY_PREFIX}
-      -DCMAKE_FIND_ROOT_PATH=${THIRDPARTY_PREFIX}
-      -DPKG_CONFIG_PATH=${THIRDPARTY_PKG_CONFIG_PATH}
-      -DPKG_CONFIG_LIBDIR=${THIRDPARTY_PKG_CONFIG_LIBDIR}
-      -DPKG_CONFIG_EXECUTABLE=${THIRDPARTY_PKG_CONFIG_EXECUTABLE}
-      ${SHARED_LIBS_ARGUMENT}
-      ${EP_CONFIGURE_ARGUMENTS}
+    ${ToolchainWrapper}
+    ${SHARED_LIBS_ARGUMENT}
+    ${EP_CONFIGURE_ARGUMENTS}
 
     ${EP_PATCH_SOURCE_COMMAND}
     ${EP_PATCH_INSTALL_COMMAND}
@@ -103,6 +86,7 @@ function(ExternalProjectCMake EXTERNAL_PROJECT_NAME)
     LOG_CONFIGURE 1
     LOG_BUILD 1
     LOG_INSTALL 1
-  )
+    LOG_TEST 1
+    )
 endfunction(ExternalProjectCMake)
 

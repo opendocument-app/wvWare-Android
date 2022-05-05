@@ -3,7 +3,7 @@
 # pdf2htmlEX-Android (https://github.com/ViliusSutkus89/pdf2htmlEX-Android)
 # Android port of pdf2htmlEX - Convert PDF to HTML without losing text or format.
 #
-# Copyright (c) 2019 Vilius Sutkus <ViliusSutkus89@gmail.com>
+# Copyright (c) 2019 - 2021 Vilius Sutkus <ViliusSutkus89@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -22,20 +22,7 @@ include(CompilerBinaries.cmake)
 include(ProcessorCount)
 
 function(ExternalProjectAutotools EXTERNAL_PROJECT_NAME)
-  set(options)
-  set(oneValueArgs URL URL_HASH)
-  set(multipleValueArgs DEPENDS CONFIGURE_ARGUMENTS EXTRA_ARGUMENTS EXTRA_ENVVARS)
-  cmake_parse_arguments(EP "${options}" "${oneValueArgs}" "${multipleValueArgs}" ${ARGN})
-
-  FilterDependsList(EP_DEPENDS)
-  CheckIfPackageAlreadyBuilt(${EXTERNAL_PROJECT_NAME})
-  if ("${${EXTERNAL_PROJECT_NAME}_FOUND}")
-    return()
-  endif()
-
-  CheckIfTarballCachedLocally(${EXTERNAL_PROJECT_NAME} EP_URL)
-  CheckIfSourcePatchExists(${EXTERNAL_PROJECT_NAME} EP_PATCH_SOURCE_COMMAND)
-  CheckIfInstallPatchExists(${EXTERNAL_PROJECT_NAME} EP_PATCH_INSTALL_COMMAND)
+  ExternalProjectHeaderBoilerplate(${ARGN})
 
   set(EP_TOOLCHAIN_ENV
     AS=${AS}
@@ -50,17 +37,19 @@ function(ExternalProjectAutotools EXTERNAL_PROJECT_NAME)
 
     PKG_CONFIG_PATH=${THIRDPARTY_PKG_CONFIG_PATH}
     PKG_CONFIG_LIBDIR=${THIRDPARTY_PKG_CONFIG_LIBDIR}
-    PKG_CONFIG=${THIRDPARTY_PKG_CONFIG_EXECUTABLE}
+    PKG_CONFIG=${PKG_CONFIG_EXECUTABLE}
 
     CFLAGS=${CFLAGS}
     CXXFLAGS=${CXXFLAGS}
     LDFLAGS=${LDFLAGS}
-  )
+    )
   LIST(APPEND EP_TOOLCHAIN_ENV ${EP_EXTRA_ENVVARS})
 
   SET(EP_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E env ${EP_TOOLCHAIN_ENV}
     ./configure
-    --prefix=${THIRDPARTY_PREFIX} --oldincludedir=${THIRDPARTY_PREFIX}/include)
+    --prefix=${THIRDPARTY_PREFIX}
+    --oldincludedir=${THIRDPARTY_PREFIX}/include
+    )
 
   if (HOST_TRIPLE)
     list(APPEND EP_CONFIGURE_COMMAND --host ${HOST_TRIPLE})
@@ -94,6 +83,6 @@ function(ExternalProjectAutotools EXTERNAL_PROJECT_NAME)
     LOG_CONFIGURE 1
     LOG_BUILD 1
     LOG_INSTALL 1
-  )
+    )
 endfunction(ExternalProjectAutotools)
 

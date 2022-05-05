@@ -1,6 +1,6 @@
 # Android port of [wvWare](http://wvware.sourceforge.net/)
 
-[![privilegedBuild](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/privilegedBuild.yml/badge.svg)](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/privilegedBuild.yml)
+[![build](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml/badge.svg)](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/com.viliussutkus89/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
 
 ### Scope:
