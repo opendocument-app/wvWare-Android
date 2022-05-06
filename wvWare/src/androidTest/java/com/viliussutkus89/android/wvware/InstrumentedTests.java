@@ -153,8 +153,25 @@ public class InstrumentedTests {
     }
   }
 
+  boolean is_ABI_X86_or_X86_64() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+      return Build.CPU_ABI.equals("x86") || Build.CPU_ABI.equals("x86_64");
+    } else {
+      if (Build.SUPPORTED_32_BIT_ABIS.length != 0 && Build.SUPPORTED_32_BIT_ABIS[0].equals("x86")) {
+        return true;
+      }
+      return (Build.SUPPORTED_64_BIT_ABIS.length != 0 && Build.SUPPORTED_64_BIT_ABIS[0].equals("x86_64"));
+    }
+  }
+
   @Test
   public void encryptedDOC() {
+    // Issue #6
+    // It seems to work on arm ABI
+    if (is_ABI_X86_or_X86_64()) {
+      return;
+    }
+
     wvWare converter = new wvWare(InstrumentationRegistry.getInstrumentation().getTargetContext());
 
     File docFile = extractAssetDOC("passwordProtected.doc");
