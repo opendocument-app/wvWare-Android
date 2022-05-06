@@ -23,6 +23,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.getkeepsafe.relinker.ReLinker;
+import com.getkeepsafe.relinker.ReLinkerInstance;
 import com.viliussutkus89.android.assetextractor.AssetExtractor;
 import com.viliussutkus89.android.tmpfile.Tmpfile;
 
@@ -65,7 +67,12 @@ public final class wvWare {
 
   private synchronized void init(@NonNull Context ctx) {
     Tmpfile.init(ctx.getCacheDir());
-    System.loadLibrary("wvware-android");
+
+    ReLinkerInstance reLinker = ReLinker.recursively();
+    // https://github.com/KeepSafe/ReLinker/issues/77
+    // Manually load dependencies, because ReLinker.recursively() doesn't actually load recursively
+    reLinker.loadLibrary(ctx, "c++_shared");
+    reLinker.loadLibrary(ctx, "wvware-android");
 
     LegacyCleanup.cleanup(ctx);
 
