@@ -30,6 +30,12 @@ group = 'com.viliussutkus89'
 //#UNCOMMENT-DURING-STAGING# /*
 def gatherReleaseArtifactsTask = tasks.getByPath(':dependency-builder:gatherReleaseArtifacts')
 def gatherDebugArtifactsTask = tasks.getByPath(':dependency-builder:gatherDebugArtifacts')
+afterEvaluate {
+    tasks.named('mergeReleaseJniLibFolders').get().dependsOn(gatherReleaseArtifactsTask)
+    tasks.named('generateReleaseAssets').get().dependsOn(gatherReleaseArtifactsTask)
+    tasks.named('mergeDebugJniLibFolders').get().dependsOn(gatherDebugArtifactsTask)
+    tasks.named('generateDebugAssets').get().dependsOn(gatherDebugArtifactsTask)
+}
 //#UNCOMMENT-DURING-STAGING# */
 android {
     compileSdkVersion 32
