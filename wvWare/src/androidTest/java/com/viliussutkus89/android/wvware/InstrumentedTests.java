@@ -1,7 +1,7 @@
 /*
  * InstrumentedTests.java
  *
- * Copyright (C) 2020 Vilius Sutkus'89 <ViliusSutkus89@gmail.com>
+ * Copyright (c) 2020 - 2022 ViliusSutkus89.com
  *
  * wvWare-Android is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as published by
@@ -18,15 +18,26 @@
 
 package com.viliussutkus89.android.wvware;
 
+import android.Manifest;
 import android.app.Instrumentation;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Build;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.GrantPermissionRule;
+import androidx.test.runner.screenshot.ScreenCapture;
+import androidx.test.runner.screenshot.Screenshot;
 
 import com.viliussutkus89.android.assetextractor.AssetExtractor;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -38,6 +49,32 @@ import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class InstrumentedTests {
+
+  @Rule
+  public RuleChain screenshotRule;
+
+  @Before
+  public void screenshotRuleChain() {
+    // Android R requires storage permission finessing
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+      screenshotRule = RuleChain
+              .outerRule(GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+              .around(new TestWatcher() {
+                @Override
+                protected void failed(Throwable e, Description description) {
+                  super.failed(e, description);
+                  ScreenCapture capture = Screenshot.capture()
+                          .setName(description.getTestClass().getSimpleName() + "-" + description.getMethodName())
+                          .setFormat(Bitmap.CompressFormat.PNG);
+                  try {
+                    capture.process();
+                  } catch (IOException err) {
+                    err.printStackTrace();
+                  }
+                }
+              });
+    }
+  }
 
   // Files must be placed in androidTest/assets/
   private final String[] m_DOCsToTest = new String[] {
