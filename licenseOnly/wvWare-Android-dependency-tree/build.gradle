@@ -40,7 +40,7 @@ dependencies {
     // none
 
     // Dependencies of libwmf
-    implementation 'com.viliussutkus89.licenseOnly:FreeType:2.10.1'
+    implementation 'com.viliussutkus89.licenseOnly:FreeType:2.12.1'
     implementation 'com.viliussutkus89.licenseOnly:libxml:2.9.9'
 
     // Dependencies of GLib
