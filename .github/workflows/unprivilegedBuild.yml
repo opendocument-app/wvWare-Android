@@ -40,9 +40,6 @@ on:
       - '!.github/workflows/unprivilegedBuild.yml'
       - 'licenseOnly/**'
 
-env:
-  TARBALL_CACHE_KEY:  "tarballs-key-2"
-
 permissions:
   actions: none
   checks: none
@@ -69,11 +66,6 @@ jobs:
       # ninja is required to build projects, using meson build system
       - run: pip3 install --user meson ninja
 
-      - name: Cache tarballs
-        uses: actions/cache@v3
-        with:
-          key: ${{ env.TARBALL_CACHE_KEY }}
-          path: dependency-builder/src/main/cpp/tarballs
       - run: ./dodownloadtarballs --serial
 
       - run: ./gradlew lintRelease publishToMavenLocal
