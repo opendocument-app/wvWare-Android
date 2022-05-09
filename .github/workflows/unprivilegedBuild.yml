@@ -75,6 +75,7 @@ jobs:
         with:
           name: dependencyBuildLogs
           path: |
+            dependency-builder/.cxx/**/*-download-*.log
             dependency-builder/.cxx/**/*-configure-*.log
             dependency-builder/.cxx/**/*-build-*.log
             dependency-builder/.cxx/**/*-install-*.log
