@@ -1,20 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.viliussutkus89.android.wvware.sampleapp">
+
     <application
-        android:allowBackup="true"
+        android:name=".wvWareApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:exported="true">
+        android:theme="@style/Theme.MyApplication">
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+        <service
+            android:name=".ConverterWorkerRemoteService"
+            android:exported="false"
+            android:process=":converterWorkerProcess" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ConverterActivity"
+            android:parentActivityName=".MainActivity"
+            android:exported="true"
+            tools:ignore="AppLinkUrlError">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <!-- pdf: https://filext.com/file-extension/DOC -->
+                <data android:mimeType="application/msword" />
+                <data android:mimeType="application/doc" />
+                <data android:mimeType="appl/text" />
+                <data android:mimeType="application/vnd.msword" />
+                <data android:mimeType="application/vnd.ms-word" />
+                <data android:mimeType="application/winword" />
+                <data android:mimeType="application/word" />
+                <data android:mimeType="application/x-msw6" />
+                <data android:mimeType="application/x-msword" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".HTMLReaderActivity"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".AboutActivity"
+            android:parentActivityName=".MainActivity" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
