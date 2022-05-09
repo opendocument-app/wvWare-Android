@@ -146,26 +146,6 @@ jobs:
 
       - run: ./ci-scripts/prepareLibraryTestsForStagingRepository wvWare --output=build/lib-staging --repository=${{ needs.buildLibrary.outputs.STAGING_REPO_URL }}
 
-      - name: Android Virtual Device (AVD) cache
-        uses: actions/cache@v3
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.arch }}-${{ matrix.api-level }}-${{ matrix.api-type-target }}-2
-
-      - name: Create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          arch: ${{ matrix.arch }}
-          target: ${{ matrix.api-type-target }}
-          sdcard-path-or-size: 1G
-          disk-size: 8G
-          script: echo "Generated AVD snapshot for caching."
-
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
