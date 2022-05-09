@@ -34,14 +34,13 @@ dependencies {
 
     // Dependencies of libgsf
     implementation 'com.viliussutkus89.licenseOnly:GLib:2.72.1'
-    implementation 'com.viliussutkus89.licenseOnly:libxml:2.9.9'
+    implementation 'com.viliussutkus89.licenseOnly:libxml:2.9.14'
 
     // Dependencies of libpng
     // none
 
     // Dependencies of libwmf
     implementation 'com.viliussutkus89.licenseOnly:FreeType:2.12.1'
-    implementation 'com.viliussutkus89.licenseOnly:libxml:2.9.9'
 
     // Dependencies of GLib
     implementation 'com.viliussutkus89.licenseOnly:libiconv:1.16'
