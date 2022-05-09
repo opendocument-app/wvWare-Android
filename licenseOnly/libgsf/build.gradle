@@ -13,7 +13,7 @@ android {
         targetSdk 32
 
         versionCode 1
-        versionName '1.14.46'
+        versionName '1.14.49'
     }
 
     publishing {
@@ -42,12 +42,12 @@ afterEvaluate {
                     licenses {
                         license {
                             name = 'GPLv2'
-                            url = 'https://gitlab.gnome.org/GNOME/libgsf/-/blob/LIBGSF_1_14_46/COPYING'
+                            url = 'https://gitlab.gnome.org/GNOME/libgsf/-/blob/LIBGSF_1_14_49/COPYING'
                             distribution = 'repo'
                         }
                         license {
                             name = 'lGPLv2.1'
-                            url = 'https://gitlab.gnome.org/GNOME/libgsf/-/blob/LIBGSF_1_14_46/COPYING.LIB'
+                            url = 'https://gitlab.gnome.org/GNOME/libgsf/-/blob/LIBGSF_1_14_49/COPYING.LIB'
                             distribution = 'repo'
                         }
                     }
@@ -57,7 +57,7 @@ afterEvaluate {
                     }
                     developers {
                         // Developer list obtained from:
-                        // https://gitlab.gnome.org/GNOME/libgsf/-/blob/LIBGSF_1_14_46/MAINTAINERS
+                        // https://gitlab.gnome.org/GNOME/libgsf/-/blob/LIBGSF_1_14_49/MAINTAINERS
                         developer {
                             name = 'Jody Goldberg'
                             email = 'jody@gnome.org'
