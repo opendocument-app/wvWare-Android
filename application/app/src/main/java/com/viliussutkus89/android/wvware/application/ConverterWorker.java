@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viliussutkus89.android.wvware.sampleapp;
+package com.viliussutkus89.android.wvware.application;
 
 import android.content.ContentResolver;
 import android.content.Context;

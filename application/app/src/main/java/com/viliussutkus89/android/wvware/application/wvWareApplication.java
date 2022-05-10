@@ -1,4 +1,4 @@
-package com.viliussutkus89.android.wvware.sampleapp;
+package com.viliussutkus89.android.wvware.application;
 
 import android.app.Application;
 

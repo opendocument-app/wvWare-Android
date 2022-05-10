@@ -70,7 +70,7 @@ sub getVersionCode {
 
 sub getAppVersion {
     my ($appVersion) = fileParser::grepSingleLine(
-        pathResolver::getAbsolutePath($rootDir . '/sampleapp/app/build.gradle'),
+        pathResolver::getAbsolutePath($rootDir . '/application/app/build.gradle'),
         qr/versionName\s+["'](\d+\.\d+\.\d+(?:\.\d+)?)["']$/
     );
     return $appVersion;
@@ -78,7 +78,7 @@ sub getAppVersion {
 
 sub getAppReleaseNumber {
     my ($appReleaseNumber) = fileParser::grepSingleLine(
-        pathResolver::getAbsolutePath($rootDir . '/sampleapp/app/build.gradle'),
+        pathResolver::getAbsolutePath($rootDir . '/application/app/build.gradle'),
         qr/versionName\s+["']\d+\.\d+\.\d+(?:\.(\d+))?["']$/
     );
     # App Release Number may or may not be available
@@ -91,7 +91,7 @@ sub getAppReleaseNumber {
 
 sub getAppVersionCode {
     my ($versionCode) = fileParser::grepSingleLine(
-        pathResolver::getAbsolutePath($rootDir . '/sampleapp/app/build.gradle'),
+        pathResolver::getAbsolutePath($rootDir . '/application/app/build.gradle'),
         qr/versionCode\s+(\d+)\s*$/
     );
     return $versionCode;

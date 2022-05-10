@@ -3,13 +3,13 @@
 [![build](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml/badge.svg)](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/com.viliussutkus89/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
 
-Packaged as a library, but also available as an [application](/sampleapp).
+Packaged as a library, but also available as an [application](/application).
 
 ### Scope:
 Limited to wvHtml.
 
 ### How to install:
-[sampleapp/app/build.gradle](sampleapp/app/build.gradle) contains code to load the library as a dependency in Gradle.
+[application/app/build.gradle](application/app/build.gradle) contains code to load the library as a dependency in Gradle.
 ```gradle
 dependencies {
     implementation 'com.viliussutkus89:wvware-android:1.2.6'

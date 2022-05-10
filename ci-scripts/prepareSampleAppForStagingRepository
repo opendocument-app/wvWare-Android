@@ -89,7 +89,7 @@ $sampleAppStaging->append('settings.gradle', "dependencyResolutionManagement.rep
 # Copy app files
 $sampleAppStaging->update($appProjectName, undef, sub {
     $_ = shift;
-    # Exclude sampleapp/app/build/
+    # Exclude application/app/build/
     if (/$appProjectName\/build\//) {
         return undef;
     }

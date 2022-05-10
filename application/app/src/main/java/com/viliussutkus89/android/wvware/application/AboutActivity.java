@@ -1,4 +1,4 @@
-package com.viliussutkus89.android.wvware.sampleapp;
+package com.viliussutkus89.android.wvware.application;
 
 import android.os.Bundle;
 import android.widget.TextView;

@@ -58,13 +58,13 @@ jobs:
 
       - id: decodeSampleAppKeystore
         run: |
-          echo "${{ env.APP_SIGNING_KEYFILE_BASE64 }}" | base64 --decode - > "$HOME/com.viliussutkus89.android.wvware.sampleapp.jks"
-          echo "::set-output name=APP_SIGNING_KEYFILE::$HOME/com.viliussutkus89.android.wvware.sampleapp.jks"
+          echo "${{ env.APP_SIGNING_KEYFILE_BASE64 }}" | base64 --decode - > "$HOME/com.viliussutkus89.android.wvware.application.jks"
+          echo "::set-output name=APP_SIGNING_KEYFILE::$HOME/com.viliussutkus89.android.wvware.application.jks"
         env:
           APP_SIGNING_KEYFILE_BASE64: ${{ secrets.APP_SIGNING_KEYFILE_BASE64 }}
 
       - run: ./gradlew build lintRelease
-        working-directory: sampleapp
+        working-directory: application
         env:
           APP_SIGNING_KEYFILE: ${{ steps.decodeSampleAppKeystore.outputs.APP_SIGNING_KEYFILE }}
           APP_SIGNING_PASS: ${{ secrets.APP_SIGNING_PASS }}
@@ -73,13 +73,13 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: APKs
-          path: sampleapp/app/build/outputs/apk/**/*.apk
+          path: application/app/build/outputs/apk/**/*.apk
 
-      - run: mv sampleapp/app/build/reports/lint-results-release.html sampleapp-lint-report.html
+      - run: mv application/app/build/reports/lint-results-release.html application-lint-report.html
       - uses: actions/upload-artifact@v3
         with:
-          name: sampleapp-lint-report.html
-          path: sampleapp-lint-report.html
+          name: application-lint-report.html
+          path: application-lint-report.html
 
   releaseApp:
     needs: buildSampleApp
@@ -106,7 +106,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "v${{ steps.version.outputs.appVersion }}-AppRelease"
           name: "[AppRelease] ${{ github.event.repository.name }} v${{ steps.version.outputs.appVersion }}"
-          artifacts: "artifacts/APKs/**/*.apk,artifacts/sampleapp-lint-report.html/sampleapp-lint-report.html"
+          artifacts: "artifacts/APKs/**/*.apk,artifacts/application-lint-report.html/application-lint-report.html"
 
   postReleaseAppVersionIncrement:
     needs: releaseApp

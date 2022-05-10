@@ -188,22 +188,22 @@ jobs:
           path: ~/.m2
 
       - name: Prepare sample app for staging repository
-        run: ./ci-scripts/prepareSampleAppForStagingRepository sampleapp app --output=build/sampleapp-staging --repository=mavenLocal
+        run: ./ci-scripts/prepareSampleAppForStagingRepository application app --output=build/application-staging --repository=mavenLocal
 
       - name: Build and lint sample app from staging library
         run: ./gradlew build lintRelease
-        working-directory: build/sampleapp-staging
+        working-directory: build/application-staging
 
       - uses: actions/upload-artifact@v3
         with:
           name: APKs
-          path: build/sampleapp-staging/app/build/outputs/apk/**/*.apk
+          path: build/application-staging/app/build/outputs/apk/**/*.apk
           if-no-files-found: error
 
       - uses: actions/upload-artifact@v3
         with:
-          name: sampleapp-lint-report
-          path: build/sampleapp-staging/app/build/reports/lint-results-release.html
+          name: application-lint-report
+          path: build/application-staging/app/build/reports/lint-results-release.html
           if-no-files-found: error
 
   buildSampleAppAgainstReleasedLibrary:
@@ -218,16 +218,16 @@ jobs:
       - uses: android-actions/setup-android@v2
 
       - run: ./gradlew build lintRelease
-        working-directory: sampleapp
+        working-directory: application
 
       - uses: actions/upload-artifact@v3
         with:
           name: APKs
-          path: sampleapp/app/build/outputs/apk/**/*.apk
+          path: application/app/build/outputs/apk/**/*.apk
           if-no-files-found: error
 
       - uses: actions/upload-artifact@v3
         with:
-          name: sampleapp-lint-report
-          path: mv sampleapp/app/build/reports/lint-results-release.html
+          name: application-lint-report
+          path: mv application/app/build/reports/lint-results-release.html
           if-no-files-found: error

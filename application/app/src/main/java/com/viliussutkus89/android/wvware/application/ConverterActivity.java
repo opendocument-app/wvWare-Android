@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.viliussutkus89.android.wvware.sampleapp;
+package com.viliussutkus89.android.wvware.application;
 
 import static androidx.work.multiprocess.RemoteListenableWorker.ARGUMENT_CLASS_NAME;
 import static androidx.work.multiprocess.RemoteListenableWorker.ARGUMENT_PACKAGE_NAME;
