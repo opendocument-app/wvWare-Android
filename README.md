@@ -36,3 +36,7 @@ Example demonstrates how to convert DOC files to HTML and either open the result
 Storage Access Framework (SAF) is used for file management, it requires API level 19 (KitKat).
 Debug build of sample application is available in [Releases Page](https://github.com/ViliusSutkus89/wvWare-Android/releases)
 
+### C++ runtime dependency:
+[Using mismatched prebuilt libraries](https://developer.android.com/ndk/guides/common-problems#using_mismatched_prebuilt_libraries) is less problematic if all the libraries used in the application are:
+* Built with the same toolchain - ndk-23.1.7779620
+* Linked against shared C++ STL - `android.defaultConfig.externalNativeBuild.cmake.arguments "-DANDROID_STL=c++_shared"` in app's (and all JNI dependencies) build.gradle.
