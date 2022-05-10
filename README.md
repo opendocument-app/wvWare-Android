@@ -3,8 +3,10 @@
 [![build](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml/badge.svg)](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/com.viliussutkus89/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
 
+Packaged as a library, but also available as an [application](/sampleapp).
+
 ### Scope:
-Currently limited to wvHtml.
+Limited to wvHtml.
 
 ### How to install:
 [sampleapp/app/build.gradle](sampleapp/app/build.gradle) contains code to load the library as a dependency in Gradle.
@@ -30,11 +32,6 @@ java.io.File outputHTML = new wvWare(getApplicationContext()).setInputDOC(input)
 ```
 
 Library needs Android Context to obtain path to cache directory and asset files, which are supplied in .aar.
-
-### [Sample application](/sampleapp)
-Example demonstrates how to convert DOC files to HTML and either open the result in browser or save to storage.
-Storage Access Framework (SAF) is used for file management, it requires API level 19 (KitKat).
-Debug build of sample application is available in [Releases Page](https://github.com/ViliusSutkus89/wvWare-Android/releases)
 
 ### C++ runtime dependency:
 [Using mismatched prebuilt libraries](https://developer.android.com/ndk/guides/common-problems#using_mismatched_prebuilt_libraries) is less problematic if all the libraries used in the application are:
