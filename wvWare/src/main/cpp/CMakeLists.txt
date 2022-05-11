@@ -19,8 +19,7 @@ set(CMAKE_BUILD_TYPE Release CACHE STRING "Build configuration (Debug, Release, 
 
 project(wvWare-Android)
 
-get_filename_component(GIT_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../.." ABSOLUTE)
-SET(PKG_CONFIG_EXECUTABLE ${GIT_ROOT_DIR}/dependency-builder/build/installed/${CMAKE_BUILD_TYPE}/${ANDROID_ABI}/bin/pkg-config)
+SET(PKG_CONFIG_EXECUTABLE ${INSTALLED_PREFIX}/${ANDROID_ABI}/bin/pkg-config-dynamic)
 
 include(FindPkgConfig)
 
