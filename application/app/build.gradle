@@ -10,8 +10,8 @@ android {
         applicationId "com.viliussutkus89.android.wvware.application"
         minSdkVersion 16
         targetSdkVersion 32
-        versionCode 23
-        versionName '1.2.7.0'
+        versionCode 24
+        versionName '1.2.7.1'
     }
     splits {
         abi {
