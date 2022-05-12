@@ -1,2 +1,0 @@
-- Built against shared C++ STL
-- Updated dependencies
