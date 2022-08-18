@@ -63,9 +63,9 @@ android {
     buildFeatures.prefab true
     externalNativeBuild.cmake {
         path "src/main/cpp/CMakeLists.txt"
-        version "3.18.1"
+        version "3.22.1"
     }
-    ndkVersion '23.1.7779620'
+    ndkVersion '23.2.8568313'
     buildTypes {
         release.externalNativeBuild.cmake.arguments '-DCMAKE_BUILD_TYPE=MinSizeRel', "-DINSTALLED_PREFIX=${gatherReleaseArtifactsTask.installed.get()}"
         debug.externalNativeBuild.cmake.arguments "-DINSTALLED_PREFIX=${gatherDebugArtifactsTask.installed.get()}"
