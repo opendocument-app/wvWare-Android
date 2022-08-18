@@ -69,24 +69,21 @@ if (defined $help) {
 my $rootDirectory = File::Basename::dirname(pathResolver::getAbsolutePath(File::Basename::dirname(__FILE__)));
 my $versionIncrementer = fileUpdater->new({ rootDirectory => $rootDirectory });
 
-# Both app and library versionCode need to be incremental
-my $vCode = max($oldVersionCode, $oldAppVersionCode);
-
 my ($major, $minor, $patch_) = $oldVersion =~ /(\d+)\.(\d+)\.(\d+)/;
 if (defined $upMajor) {
     $major = $major + 1;
     $newVersion = "${major}.0.0";
-    $newVersionCode = $vCode + 10000;
+    $newVersionCode = $oldVersionCode + 10000;
 }
 elsif (defined $upMinor) {
     $minor = $minor + 1;
     $newVersion = "${major}.${minor}.0";
-    $newVersionCode = $vCode + 1000;
+    $newVersionCode = $oldVersionCode + 1000;
 }
 elsif (defined $upPatch) {
     $patch_ = $patch_ + 1;
     $newVersion = "${major}.${minor}.${patch_}";
-    $newVersionCode = $vCode + 100;
+    $newVersionCode = $oldVersionCode + 100;
 }
 else {
     $newVersion = shift or usage();
