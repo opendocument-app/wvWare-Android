@@ -3,7 +3,10 @@
 [![build](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml/badge.svg)](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/com.viliussutkus89/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
 
-Packaged as a library, but also available as an [application](/application).
+### Used by:
+- [Documenter](https://github.com/ViliusSutkus89/Documenter) on [Google Play](https://play.google.com/store/apps/details?id=com.viliussutkus89.documenter) - reference application for pdf2htmlEX-Android and wvWare-Android libraries.
+- [OpenDocument.droid](https://github.com/opendocument-app/OpenDocument.droid) on [Google Play](https://play.google.com/store/apps/details?id=at.tomtasche.reader) - It's Android's first OpenOffice Document Reader!
+- Defunct [wvWare-Android application](https://github.com/ViliusSutkus89/wvWare-Android/tree/v1.2.7/application).
 
 ### Scope:
 Limited to wvHtml.
