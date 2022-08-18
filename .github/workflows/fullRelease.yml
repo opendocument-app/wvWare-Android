@@ -81,7 +81,7 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Update README.md and sample app to match versions with to be released library version (${{ steps.updateDownstreamVersion.outputs.version }})"
+          commit_message: "Update library version in README.md (${{ steps.updateDownstreamVersion.outputs.version }})"
           file_pattern: ${{ steps.updateDownstreamVersion.outputs.files }}
 
       - name: Create GitHub Release
@@ -105,64 +105,3 @@ jobs:
         with:
           commit_message: "Post release truncation of UpcomingReleaseNotes.md"
           file_pattern: UpcomingReleaseNotes.md
-
-  buildSampleApp:
-    environment: SampleAppKeystore
-    needs: releaseGitHub
-    permissions:
-      # Permission needed to attach artifact to GitHub release.
-      contents: write
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: refs/tags/${{ needs.releaseGitHub.outputs.RELEASE_TAG }}
-      - uses: actions/setup-java@v3
-        with:
-          distribution: zulu
-          java-version: 11
-      - uses: android-actions/setup-android@v2
-
-      - id: decodeSampleAppKeystore
-        run: |
-          echo "${{ env.APP_SIGNING_KEYFILE_BASE64 }}" | base64 --decode - > "$HOME/com.viliussutkus89.android.wvware.application.jks"
-          echo "::set-output name=APP_SIGNING_KEYFILE::$HOME/com.viliussutkus89.android.wvware.application.jks"
-        env:
-          APP_SIGNING_KEYFILE_BASE64: ${{ secrets.APP_SIGNING_KEYFILE_BASE64 }}
-
-      - run: ./gradlew build lintRelease
-        working-directory: application
-        env:
-          APP_SIGNING_KEYFILE: ${{ steps.decodeSampleAppKeystore.outputs.APP_SIGNING_KEYFILE }}
-          APP_SIGNING_PASS: ${{ secrets.APP_SIGNING_PASS }}
-          APP_SIGNING_ALIAS: ${{ secrets.APP_SIGNING_ALIAS }}
-
-      - run: mv application/app/build/reports/lint-results-release.html application-lint-report.html
-
-      - name: Attach sample application to GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ needs.releaseGitHub.outputs.RELEASE_TAG }}
-          omitNameDuringUpdate: true
-          omitBodyDuringUpdate: true
-          allowUpdates: true
-          artifacts: "application/app/build/outputs/apk/**/*.apk,application-lint-report.html"
-
-  postReleaseAppVersionIncrement:
-    needs: buildSampleApp
-    permissions:
-      contents: write
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.ref }}
-
-      - run: ./ci-scripts/incrementVersion --application
-        id: postReleaseVersionIncrement
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Post release app version increment to ${{ steps.postReleaseVersionIncrement.outputs.newAppVersion }} (from ${{ steps.postReleaseVersionIncrement.outputs.oldAppVersion }})"
-          file_pattern: ${{ steps.postReleaseVersionIncrement.outputs.files }}
