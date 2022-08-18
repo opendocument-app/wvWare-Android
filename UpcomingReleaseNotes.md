@@ -1,2 +1,0 @@
-- Update NDK to 23.2.8568313 (last to support sdk level 16)
-- Remove deprecated NoForking mode
