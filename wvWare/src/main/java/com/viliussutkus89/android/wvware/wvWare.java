@@ -98,14 +98,6 @@ public final class wvWare {
     return this;
   }
 
-  /*
-   * @deprecated wvWare-Android doesn't fork anymore
-   */
-  @Deprecated
-  public wvWare setNoForking(boolean thisArgumentIsIgnored) {
-    return this;
-  }
-
   public File convertToHTML() throws PasswordRequiredException, WrongPasswordException,
     ConversionFailedException, FileNotFoundException, IOException {
     if (null == this.p_inputDOC) {
