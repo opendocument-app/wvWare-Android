@@ -62,8 +62,8 @@ jobs:
           lfs: true
       - uses: actions/setup-java@v3
         with:
-          distribution: zulu
-          java-version: 11
+          distribution: temurin
+          java-version: 17
       - uses: android-actions/setup-android@v2
       # ninja is required to build projects, using meson build system
       - run: pip3 install --user meson ninja
@@ -123,8 +123,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          distribution: zulu
-          java-version: 11
+          distribution: temurin
+          java-version: 17
       - uses: android-actions/setup-android@v2
 
       - uses: actions/download-artifact@v3
