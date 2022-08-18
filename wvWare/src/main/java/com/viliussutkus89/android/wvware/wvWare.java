@@ -103,6 +103,14 @@ public final class wvWare {
     return this;
   }
 
+  public static String generateOutputFilename(String inputFilename) {
+    String inputFilenameNoExt = inputFilename;
+    if (inputFilenameNoExt.endsWith(".doc")) {
+      inputFilenameNoExt = inputFilenameNoExt.substring(0, inputFilenameNoExt.length() - 4);
+    }
+    return inputFilenameNoExt + ".html";
+  }
+
   public File convertToHTML() throws PasswordRequiredException, WrongPasswordException,
     ConversionFailedException, FileNotFoundException, IOException {
     if (null == this.p_inputDOC) {
