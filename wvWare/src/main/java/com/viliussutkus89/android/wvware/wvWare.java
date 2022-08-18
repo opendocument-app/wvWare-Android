@@ -1,7 +1,7 @@
 /*
  * wvWare.java
  *
- * Copyright (C) 2020 Vilius Sutkus'89 <ViliusSutkus89@gmail.com>
+ * Copyright (C) 2020, 2022 ViliusSutkus89.com
  *
  * wvWare-Android is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as published by
@@ -22,6 +22,7 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getkeepsafe.relinker.ReLinker;
 import com.getkeepsafe.relinker.ReLinkerInstance;
@@ -32,15 +33,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+
 public final class wvWare {
   private static final String s_TAG = "wvWare-Android";
 
   private File m_outputDir;
-
   private File p_inputDOC;
-
+  private File p_outputHTML;
   private String p_password = "";
-
   private boolean p_isNoGraphicsMode = false;
 
   public static class ConversionFailedException extends Exception {
@@ -88,6 +88,11 @@ public final class wvWare {
     return this;
   }
 
+  public wvWare setOutputHtml(@Nullable File outputHtml) {
+    this.p_outputHTML = outputHtml;
+    return this;
+  }
+
   public wvWare setPassword(@NonNull String password) {
     this.p_password = password;
     return this;
@@ -109,7 +114,11 @@ public final class wvWare {
     }
 
     String filename = removeExtensionFromFilename();
-    File outputFile = generateUniqueFile(filename, ".html");
+    File outputFile = this.p_outputHTML;
+    if (null == outputFile) {
+      outputFile = generateUniqueFile(filename, ".html");
+    }
+
     File imagesDir = generateUniqueFolder(filename);
 
     int retVal = _convertToHTML(this.p_inputDOC.getAbsolutePath(), outputFile.getAbsolutePath(),
