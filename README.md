@@ -15,7 +15,7 @@ Limited to wvHtml.
 [application/app/build.gradle](application/app/build.gradle) contains code to load the library as a dependency in Gradle.
 ```gradle
 dependencies {
-    implementation 'com.viliussutkus89:wvware-android:1.2.7'
+    implementation 'com.viliussutkus89:wvware-android:1.2.8'
 }
 ```
 
