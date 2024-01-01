@@ -123,10 +123,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Oldest API supported by NDK
-          - arch: x86
-            api-level: 16
-            api-type-target: default
           # Oldest x86_64 image
           - arch: x86_64
             api-level: 21
