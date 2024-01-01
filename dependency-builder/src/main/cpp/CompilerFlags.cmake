@@ -60,6 +60,7 @@ STRING(APPEND LDFLAGS " -L${THIRDPARTY_PREFIX}/lib")
 # libpdf2htmlEX.so is a shared lib
 STRING(APPEND CFLAGS " -fPIC ")
 STRING(APPEND CXXLAGS " -fPIC ")
+STRING(APPEND LDFLAGS " -pie ")
 
 # march=armv7-a breaks build.
 # Both Autotools and Meson fail, telling that compiler does not work
