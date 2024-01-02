@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-include ":dependency-builder", ":wvWare"
+include(":wvWare")
 rootProject.name = "wvware-android"

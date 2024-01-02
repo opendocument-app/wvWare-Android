@@ -34,7 +34,6 @@ use warnings;
 use base 'Exporter';
 our $VERSION = '2.0.0';
 our @EXPORT = qw(getVersion);
-our @EXPORT_OK = qw(getVersionCode);
 
 use File::Basename 'dirname';
 use Getopt::Long;
@@ -59,15 +58,6 @@ sub getVersion {
     );
     return $version;
 }
-
-sub getVersionCode {
-    my ($versionCode) = fileParser::grepSingleLine(
-        pathResolver::getAbsolutePath($rootDir . '/wvWare/build.gradle'),
-        qr/versionCode\s+(\d+)\s*$/
-    );
-    return $versionCode;
-}
-
 
 if (not caller()) {
     my ($ci);

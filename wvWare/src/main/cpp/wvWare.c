@@ -18,7 +18,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <wv/config.h>
 #endif
 
 #include <stdlib.h>
@@ -26,7 +26,7 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
-#include "wv.h"
+#include <wv/wv.h>
 #include "getopt.h"
 #include "errorPrinter.h"
 
