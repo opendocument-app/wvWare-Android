@@ -77,7 +77,7 @@ public final class wvWare {
     LegacyCleanup.cleanup(ctx);
 
     AssetExtractor ae = new AssetExtractor(ctx.getAssets()).setNoOverwrite();
-    setDataDir(ae.extract(ctx.getFilesDir(), "wvWare/share/wv").getAbsolutePath());
+    setDataDir(ae.extract(ctx.getFilesDir(), "wv/share/wv").getAbsolutePath());
 
     this.m_outputDir = new File(ctx.getCacheDir(), "wvWare");
     this.m_outputDir.mkdir();
