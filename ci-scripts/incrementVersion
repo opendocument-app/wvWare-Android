@@ -83,7 +83,6 @@ elsif (defined $upPatch) {
 }
 else {
     $newVersion = shift or usage();
-    $newVersionCode = shift or usage();
 }
 usage if (@ARGV);
 
