@@ -66,13 +66,8 @@ public final class wvWare {
   }
 
   private synchronized void init(@NonNull Context ctx) {
+    ReLinker.recursively().loadLibrary(ctx, "wvware-android");
     Tmpfile.init(ctx.getCacheDir());
-
-    ReLinkerInstance reLinker = ReLinker.recursively();
-    // https://github.com/KeepSafe/ReLinker/issues/77
-    // Manually load dependencies, because ReLinker.recursively() doesn't actually load recursively
-    reLinker.loadLibrary(ctx, "c++_shared");
-    reLinker.loadLibrary(ctx, "wvware-android");
 
     LegacyCleanup.cleanup(ctx);
 
