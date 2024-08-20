@@ -79,7 +79,6 @@ public class ConversionTests {
     if (null != convertedHtml) {
       assertTrue("Converted HTML file not found!", convertedHtml.exists());
       assertTrue("Converted HTML file empty!", convertedHtml.length() > 0);
-      convertedHtml.delete();
     }
   }
 
