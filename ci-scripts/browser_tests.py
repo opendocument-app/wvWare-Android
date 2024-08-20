@@ -25,7 +25,7 @@ def main():
     args = parser.parse_args()
     del parser
 
-    tests = ["sample", "Tom Taschauer"]
+    tests = ["sample", "TomTaschauer"]
 
     test_result = True
 
@@ -37,7 +37,7 @@ def main():
 
     os.environ["MOZ_HEADLESS"] = "1"
     for test in tests:
-        html_file = os.path.join(html_dir, f"{test}/{test}.html")
+        html_file = os.path.join(html_dir, f"{test}.html")
         png_file = os.path.join(png_destination_dir, f"{test}.png")
         reference_png_file = os.path.join(reference_png_dir, f"{test}.png")
         diff_png_file = os.path.join(png_destination_dir, f"{test}-diff.png")
@@ -51,8 +51,7 @@ def main():
         browser.set_window_size(600, 800)
         try:
             browser.get('file://' + html_file)
-            WebDriverWait(browser, 5) \
-                .until(expected_conditions.presence_of_element_located((By.ID, 'page-container')))
+            time.sleep(4)
         finally:
             time.sleep(1)
             browser.get_full_page_screenshot_as_file(png_file)

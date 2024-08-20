@@ -57,18 +57,18 @@ public class ConversionTests {
       .setNoOverwrite();
     File cacheDir = instrumentation.getTargetContext().getCacheDir();
     ae.extract(cacheDir, "sample.doc");
-    ae.extract(cacheDir, "Tom Taschauer.doc");
+    ae.extract(cacheDir, "TomTaschauer.doc");
   }
 
   @AfterClass
   public static void cleanupExtractedDocs() {
     Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
-    new File(ctx.getCacheDir(), "Tom Taschauer.doc").delete();
+    new File(ctx.getCacheDir(), "TomTaschauer.doc").delete();
     new File(ctx.getCacheDir(), "sample.doc").delete();
   }
 
   private final Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
-  private final File inputFile = new File(ctx.getCacheDir(), "Tom Taschauer.doc");
+  private final File inputFile = new File(ctx.getCacheDir(), "TomTaschauer.doc");
   private final File inputFileWithEmbeddedImage = new File(ctx.getCacheDir(), "sample.doc");
   private final wvWare wvWare = new wvWare(ctx).setInputDOC(inputFile);
 

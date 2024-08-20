@@ -149,7 +149,7 @@ jobs:
 
             test ! -f sorry_but_tests_are_failing
 
-      - run: python ci-scripts/browser_tests.py --html-dir testResults/output-htmls --png-destination-dir testResults/pngs --reference-png-dir test/reference_pngs
+      - run: python ci-scripts/browser_tests.py --html-dir testResults/wvWare --png-destination-dir testResults/pngs --reference-png-dir test/reference_pngs
 
       - uses: actions/upload-artifact@v4
         if: always()
