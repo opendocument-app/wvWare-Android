@@ -95,6 +95,7 @@ jobs:
           if-no-files-found: error
 
   emulator:
+    needs: build
     runs-on: ubuntu-22.04
     name: android-${{ matrix.emulator.api_level }} on ${{ matrix.emulator.arch }} (${{ matrix.emulator.api_type_target }})
     strategy:
