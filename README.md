@@ -20,7 +20,7 @@ Limited to wvHtml.
 wvWare-Android is distributed through MavenCentral. Add a dependency in `build.gradle`:
 ```gradle
 dependencies {
-    implementation 'com.viliussutkus89:wvware-android:1.2.9'
+    implementation 'com.viliussutkus89:wvware-android:1.2.10'
 }
 ```
 
