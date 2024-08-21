@@ -53,7 +53,7 @@ public class EncryptedDocTests {
     Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
     new AssetExtractor(instrumentation.getContext().getAssets())
             .setNoOverwrite()
-            .extract(instrumentation.getTargetContext().getCacheDir(), "passwordProtected.doc");
+            .extract(instrumentation.getTargetContext().getCacheDir(), "testDocs/passwordProtected.doc");
   }
 
   private static boolean is_ABI_X86_or_X86_64() {
