@@ -22,8 +22,7 @@
 #include <android/log.h>
 #include <jni.h>
 #include "CCharGC.h"
-
-static FILE * g_htmlOutputFileHandle = nullptr;
+#include <wv/wv.h>
 
 extern "C" int no_graphics;
 
@@ -72,19 +71,6 @@ Java_com_viliussutkus89_android_wvware_wvWare_setDataDir(JNIEnv *env, jobject, j
     free(s_HTMLCONFIG);
   }
   s_HTMLCONFIG = strdup_and_append(dataDir.c_str(), "/wvHtml.xml");
-}
-
-int printfRedirect(const char *fmt, ...) {
-  int retVal = 0;
-  if (nullptr != g_htmlOutputFileHandle) {
-    std::va_list args;
-    va_start(args, fmt);
-    retVal = vfprintf(g_htmlOutputFileHandle, fmt, args);
-    va_end(args);
-  } else {
-    __android_log_print(ANDROID_LOG_ERROR, "wvWare-Android", "Output file handle unset!");
-  }
-  return retVal;
 }
 
 JNIEXPORT jint JNICALL

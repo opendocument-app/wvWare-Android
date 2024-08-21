@@ -53,6 +53,21 @@ jobs:
           java-version: 17
       - uses: android-actions/setup-android@v3
 
+      - name: setup python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - name: install python dependencies
+        run: pip install --upgrade conan
+
+      - run: |
+          conan config install .github/conan
+          conan profile list
+          conan profile show
+
+      - run: conan remote add odr https://artifactory.opendocument.app/artifactory/api/conan/conan
+      - run: conan graph info wvWare --profile=android-21-armv8 --build=missing --format=html > conangraph.html
+
       - run: ./gradlew lintRelease publishToMavenLocal
 
       - uses: actions/upload-artifact@v4
@@ -65,6 +80,18 @@ jobs:
         with:
           name: maven-local
           path: ~/.m2
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: conangraph.html
+          path: conangraph.html
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dotconan2
+          path: ~/.conan2
           if-no-files-found: error
 
   emulator:
@@ -112,7 +139,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.12
-      - run: pip install --upgrade adbPullAs selenium Pillow
+      - run: pip install --upgrade conan adbPullAs selenium Pillow
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dotconan2
+          path: ~/.conan2
 
       - name: Enable KVM group perms
         run: |

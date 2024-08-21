@@ -25,9 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.getkeepsafe.relinker.ReLinker;
-import com.getkeepsafe.relinker.ReLinkerInstance;
 import com.viliussutkus89.android.assetextractor.AssetExtractor;
-import com.viliussutkus89.android.tmpfile.Tmpfile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -67,12 +65,13 @@ public final class wvWare {
 
   private synchronized void init(@NonNull Context ctx) {
     ReLinker.recursively().loadLibrary(ctx, "wvware-android");
-    Tmpfile.init(ctx.getCacheDir());
+
+    EnvVar.set("TMPDIR", ctx.getCacheDir().getAbsolutePath());
 
     LegacyCleanup.cleanup(ctx);
 
     AssetExtractor ae = new AssetExtractor(ctx.getAssets()).setNoOverwrite();
-    setDataDir(ae.extract(ctx.getFilesDir(), "wv/share/wv").getAbsolutePath());
+    setDataDir(ae.extract(ctx.getFilesDir(), "wv").getAbsolutePath());
 
     this.m_outputDir = new File(ctx.getCacheDir(), "wvWare");
     this.m_outputDir.mkdir();
