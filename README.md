@@ -1,7 +1,5 @@
 # [wvWare](http://wvware.sourceforge.net/) (wvHtml) library port for Android
 
-Made possible by [ndkports](https://github.com/ViliusSutkus89/ndkports) (a collection of Open Source Linux libraries for Android).
-
 [![build](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml/badge.svg)](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/com.viliussutkus89/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
 
