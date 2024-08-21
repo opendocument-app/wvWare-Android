@@ -59,6 +59,7 @@ android {
     }
     ndkVersion '26.1.10909125'
     buildTypes.release.externalNativeBuild.cmake.arguments "-DCMAKE_BUILD_TYPE=MinSizeRel"
+    sourceSets.androidTest.assets.srcDirs = [ getProject().parent.getLayout().getProjectDirectory().dir("test/androidTestAssets") ]
 }
 
 dependencies {

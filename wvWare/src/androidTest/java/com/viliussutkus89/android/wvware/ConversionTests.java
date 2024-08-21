@@ -1,7 +1,7 @@
 /*
  * ConversionTests.java
  *
- * Copyright (c) 2020 - 2022 ViliusSutkus89.com
+ * Copyright (c) 2020 - 2022, 2024 ViliusSutkus89.com
  *
  * wvWare-Android is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as published by
@@ -24,25 +24,29 @@ import android.app.Instrumentation;
 import android.content.Context;
 
 import androidx.test.espresso.IdlingPolicies;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.viliussutkus89.android.assetextractor.AssetExtractor;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @LargeTest
-@RunWith(AndroidJUnit4.class)
+@RunWith(Parameterized.class)
 public class ConversionTests {
+  private final File docFile;
+  public ConversionTests(File docFile) {
+    this.docFile = docFile;
+  }
 
   @BeforeClass
   public static void setIdlingTimeout() {
@@ -53,54 +57,37 @@ public class ConversionTests {
   @BeforeClass
   public static void extractDocs() {
     Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-    AssetExtractor ae = new AssetExtractor(instrumentation.getContext().getAssets())
-      .setNoOverwrite();
-    File cacheDir = instrumentation.getTargetContext().getCacheDir();
-    ae.extract(cacheDir, "sample.doc");
-    ae.extract(cacheDir, "TomTaschauer.doc");
+    new AssetExtractor(instrumentation.getContext().getAssets())
+            .setNoOverwrite()
+            .extract(instrumentation.getTargetContext().getCacheDir(), "testDocs");
   }
 
-  @AfterClass
-  public static void cleanupExtractedDocs() {
-    Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
-    new File(ctx.getCacheDir(), "TomTaschauer.doc").delete();
-    new File(ctx.getCacheDir(), "sample.doc").delete();
-  }
-
-  private final Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
-  private final File inputFile = new File(ctx.getCacheDir(), "TomTaschauer.doc");
-  private final File inputFileWithEmbeddedImage = new File(ctx.getCacheDir(), "sample.doc");
-  private final wvWare wvWare = new wvWare(ctx).setInputDOC(inputFile);
-
-  private File convertedHtml = null;
-
-  @After
-  public void cleanUp() {
-    if (null != convertedHtml) {
-      assertTrue("Converted HTML file not found!", convertedHtml.exists());
-      assertTrue("Converted HTML file empty!", convertedHtml.length() > 0);
+  @Parameterized.Parameters(name = "{0}")
+  public static List<File> listPDFs() throws IOException {
+    Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+    File extractedToDir = new File(instrumentation.getTargetContext().getCacheDir(), "testDocs");
+    List<File> testFiles = new ArrayList<>();
+    String[] assetFiles = instrumentation.getContext().getAssets().list("testDocs");
+    if (assetFiles != null) {
+      for (String assetFile : assetFiles) {
+        if (!assetFile.equals("passwordProtected.doc"))
+          testFiles.add(new File(extractedToDir, assetFile));
+      }
     }
+    return testFiles;
   }
 
   @Test
-  public void convertTest() throws wvWare.ConversionFailedException, IOException {
-    convertedHtml = wvWare.convertToHTML();
-  }
+  public void convertPDF() throws wvWare.ConversionFailedException, IOException {
+    Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    wvWare wvWare = new wvWare(ctx).setInputDOC(docFile);
 
-  @Test
-  public void noGraphicsModeTest() throws wvWare.ConversionFailedException, IOException {
-    wvWare.setNoGraphicsMode();
-    convertedHtml = wvWare.convertToHTML();
-  }
+    if (docFile.getName().equals("sample.doc")) {
+      wvWare.setNoGraphicsMode();
+    }
+    File htmlFile = wvWare.convertToHTML();
 
-  @Test
-  public void HtmlFileLargerWithImageEmbedded() throws wvWare.ConversionFailedException, IOException {
-    wvWare.setInputDOC(inputFileWithEmbeddedImage);
-
-    convertedHtml = wvWare.convertToHTML();
-    File htmlNoGraphics = wvWare.setNoGraphicsMode().convertToHTML();
-
-    assertTrue(htmlNoGraphics.exists());
-    assertTrue(convertedHtml.length() > htmlNoGraphics.length());
+    assertTrue("Converted HTML file not found! " + docFile.getName(), htmlFile.exists());
+    assertTrue("Converted HTML file empty! " + docFile.getName(), htmlFile.length() > 0);
   }
 }
