@@ -10,7 +10,7 @@ task clean(type: Delete) {
     delete new File(projectDir, "wvWare/.cxx")
 }
 
-group = 'com.viliussutkus89'
+group = 'app.opendocument'
 version = '1.2.11'
 
 nexusPublishing {

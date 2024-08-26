@@ -1,7 +1,7 @@
 # [wvWare](http://wvware.sourceforge.net/) (wvHtml) library port for Android
 
-[![build](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml/badge.svg)](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/com.viliussutkus89/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
+[![build](https://github.com/app.opendocument/wvWare-Android/actions/workflows/build.yml/badge.svg)](https://github.com/ViliusSutkus89/wvWare-Android/actions/workflows/build.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/app.opendocument/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
 
 ### Used by:
 - [Documenter](https://github.com/ViliusSutkus89/Documenter) on [Google Play](https://play.google.com/store/apps/details?id=com.viliussutkus89.documenter) - reference application for pdf2htmlEX-Android and wvWare-Android libraries.
@@ -20,7 +20,7 @@ Limited to wvHtml.
 wvWare-Android is distributed through MavenCentral. Add a dependency in `build.gradle`:
 ```gradle
 dependencies {
-    implementation 'com.viliussutkus89:wvware-android:1.2.10'
+    implementation 'app.opendocument:wvware-android:1.2.10'
 }
 ```
 

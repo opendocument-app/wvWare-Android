@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #  MIT License
 #
-#  Copyright (c) 2021 - 2022 ViliusSutkus89.com
+#  Copyright (c) 2021 - 2022, 2024 ViliusSutkus89.com
 #
 #  https://github.com/ViliusSutkus89/Sample_Android_Library-MavenCentral-Instrumented_Tests
 #  ci-scripts/updateDownstreamVersions - v2.0.0
@@ -52,7 +52,7 @@ my $versionUpdater = fileUpdater->new({ rootDirectory => $rootDirectory });
 
 $versionUpdater->update('README.md', sub {
     $_ = shift;
-    s/^(\s+implementation\s+['"]com\.viliussutkus89\:wvware-android\:)[\d\.]+(['"])$/${1}${version}${2}/;
+    s/^(\s+implementation\s+['"]app\.opendocument\:wvware-android\:)[\d\.]+(['"])$/${1}${version}${2}/;
     return $_;
 });
 
