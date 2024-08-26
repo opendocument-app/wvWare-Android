@@ -71,7 +71,8 @@ public final class wvWare {
     LegacyCleanup.cleanup(ctx);
 
     AssetExtractor ae = new AssetExtractor(ctx.getAssets()).setNoOverwrite();
-    setDataDir(ae.extract(ctx.getFilesDir(), "wv").getAbsolutePath());
+    File wv_asset_dir = ae.extract(ctx.getFilesDir(), "wv");
+    EnvVar.set("WVDATADIR", wv_asset_dir.getAbsolutePath());
 
     this.m_outputDir = new File(ctx.getCacheDir(), "wvWare");
     this.m_outputDir.mkdir();
@@ -192,8 +193,6 @@ public final class wvWare {
     }
     return result;
   }
-
-  private native void setDataDir(String dataDir);
 
   private native int _convertToHTML(String inputFile, String outputFile, String imagesDir, String password, boolean isNoGraphicsMode);
 }

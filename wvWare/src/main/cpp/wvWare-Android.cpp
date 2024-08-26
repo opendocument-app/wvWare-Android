@@ -24,54 +24,7 @@
 #include "CCharGC.h"
 #include <wv/wv.h>
 
-extern "C" int no_graphics;
-
 extern "C" {
-
-char *s_WVDATADIR = NULL;
-char *s_HTMLCONFIG = NULL;
-
-int documentId = 0;
-
-int convert(char *inputFile, char *outputDir, const char *password);
-
-char *strdup_and_append(const char *a, const char *b) {
-  const size_t szA = strlen(a);
-  const size_t szB = strlen(b);
-  char *buf = new char[szA + szB + 1];
-  strcpy(buf, a);
-  strcpy(buf + szA, b);
-  buf[szA + szB] = '\0';
-  return buf;
-}
-
-char *strdup_and_append_twice(const char *a, const char *b, const char *c) {
-  const size_t szA = strlen(a);
-  const size_t szB = strlen(b);
-  const size_t szC = strlen(c);
-
-  char *buf = new char[szA + szB + szC + 1];
-  strcpy(buf, a);
-  strcpy(buf + szA, b);
-  strcpy(buf + szA + szB, c);
-  buf[szA + szB + szC] = '\0';
-  return buf;
-}
-
-JNIEXPORT void JNICALL
-Java_com_viliussutkus89_android_wvware_wvWare_setDataDir(JNIEnv *env, jobject, jstring data_dir) {
-  CCharGC dataDir(env, data_dir);
-
-  if (NULL != s_WVDATADIR) {
-    free(s_WVDATADIR);
-  }
-  s_WVDATADIR = strdup(dataDir.c_str());
-
-  if (NULL != s_HTMLCONFIG) {
-    free(s_HTMLCONFIG);
-  }
-  s_HTMLCONFIG = strdup_and_append(dataDir.c_str(), "/wvHtml.xml");
-}
 
 JNIEXPORT jint JNICALL
 Java_com_viliussutkus89_android_wvware_wvWare__1convertToHTML(JNIEnv *env, jobject,
@@ -89,12 +42,11 @@ Java_com_viliussutkus89_android_wvware_wvWare__1convertToHTML(JNIEnv *env, jobje
 
   g_htmlOutputFileHandle = fopen(outputFile.c_str(), "w");
 
-  int retVal = convert(inputFile.c_str(), imagesDir.c_str(), password.c_str());
+  int retVal = wvHtml_convert(inputFile.c_str(), imagesDir.c_str(), password.c_str());
 
   fclose(g_htmlOutputFileHandle);
   g_htmlOutputFileHandle = nullptr;
 
-  documentId++;
   return retVal;
 }
 

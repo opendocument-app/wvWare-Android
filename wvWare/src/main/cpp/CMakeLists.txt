@@ -19,8 +19,6 @@ find_library(log-lib log)
 add_definitions(-DHAVE_CONFIG_H)
 add_library(wvware-android SHARED wvWare-Android.cpp
         CCharGC.h
-        wvWare.c
-        errorPrinter.h
         EnvVar.c
 )
 
