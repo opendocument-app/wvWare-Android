@@ -1,6 +1,6 @@
 # [wvWare](http://wvware.sourceforge.net/) (wvHtml) library port for Android
 
-[![build](https://github.com/app.opendocument/wvWare-Android/actions/workflows/build.yml/badge.svg)](https://github.com/app.opendocument/wvWare-Android/actions/workflows/build.yml)
+[![build](https://github.com/opendocument-app/wvWare-Android/actions/workflows/build.yml/badge.svg)](https://github.com/opendocument-app/wvWare-Android/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/app.opendocument/wvware-android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:com.viliussutkus89%20AND%20a:wvware-android)
 
 ### Used by:
