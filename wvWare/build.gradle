@@ -105,7 +105,7 @@ publishing {
             pom {
                 name = rootProject.name
                 description = 'wvWare (wvHtml) library port for Android'
-                url = 'https://github.com/ViliusSutkus89/wvWare-Android'
+                url = 'https://github.com/opendocument-app/wvWare-Android'
                 packaging = 'aar'
                 inceptionYear = '2019'
                 developers {
@@ -116,8 +116,8 @@ publishing {
                     }
                 }
                 scm {
-                    url = 'https://github.com/ViliusSutkus89/wvWare-Android'
-                    connection = 'https://github.com/ViliusSutkus89/wvWare-Android.git'
+                    url = 'https://github.com/opendocument-app/wvWare-Android'
+                    connection = 'https://github.com/opendocument-app/wvWare-Android.git'
                 }
                 licenses {
                     license {
