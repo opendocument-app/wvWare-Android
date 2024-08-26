@@ -1,3 +1,5 @@
+import os
+
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMakeDeps
 
@@ -12,5 +14,8 @@ class wvWareConan(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)
-        tc.variables["WVWARE_RES_DIR"] = self.dependencies['wvware'].cpp_info.resdirs[0]
         tc.generate()
+
+        asset_dir = os.path.join(self.build_folder, 'assets')
+        os.mkdir(asset_dir)
+        os.symlink(self.dependencies['wvware'].cpp_info.resdirs[0], os.path.join(asset_dir, 'wv'))

@@ -21,13 +21,3 @@ project(wvWare-Android)
 find_package(wvware REQUIRED CONFIG)
 
 add_subdirectory(src/main/cpp)
-
-FILE(MAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/build/assets")
-function(copy_assets sourcevar dstsubdir)
-  if(DEFINED "${sourcevar}")
-    FILE(REMOVE_RECURSE "${CMAKE_CURRENT_LIST_DIR}/build/assets/${dstsubdir}")
-    FILE(CREATE_LINK "${${sourcevar}}" "${CMAKE_CURRENT_LIST_DIR}/build/assets/${dstsubdir}" COPY_ON_ERROR SYMBOLIC)
-  endif()
-endfunction()
-
-copy_assets("WVWARE_RES_DIR" "wv")
