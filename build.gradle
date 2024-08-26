@@ -5,11 +5,6 @@ plugins {
     id 'app.opendocument.conanandroidgradleplugin' version '0.9.2' apply false
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
-    delete new File(projectDir, "wvWare/.cxx")
-}
-
 group = 'app.opendocument'
 version = '1.2.11'
 

@@ -138,3 +138,12 @@ if (System.getenv('SIGNING_KEY')) {
         sign publishing.publications.release
     }
 }
+
+// Without removing .cxx dir on cleanup, double gradle clean is erroring out.
+// Before removing this workaround, check if "./gradlew assembleDebug; ./gradlew clean; ./gradlew clean" works
+tasks.named("clean") {
+    def dotCxxDir = getLayout().getProjectDirectory().dir(".cxx")
+    doFirst {
+        delete dotCxxDir
+    }
+}
