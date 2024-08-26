@@ -1,7 +1,7 @@
 /*
  * wvWare.java
  *
- * Copyright (C) 2020, 2022 ViliusSutkus89.com
+ * Copyright (C) 2020, 2022, 2024 ViliusSutkus89.com
  *
  * wvWare-Android is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as published by
@@ -32,6 +32,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
+/**
+ * @deprecated  This library is now part of OpenDocument App group.
+ * Edit your build.gradle to depend on
+ * implementation("app.opendocument:wvware-android:+")
+ * instead of
+ * implementation("com.viliussutkus89:wvware-android:+")
+ */
+@Deprecated
 public final class wvWare {
   private static final String s_TAG = "wvWare-Android";
 
