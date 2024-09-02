@@ -175,7 +175,7 @@ jobs:
             adb pull /data/local/tmp/beforeTests.png testResults/screenshots/
 
             ./gradlew connectedCheck || touch sorry_but_tests_are_failing
-            adbPullAs com.viliussutkus89.android.wvware.test /data/data/com.viliussutkus89.android.wvware.test/cache/wvWare testResults || true
+            adbPullAs com.viliussutkus89.android.wvware.test /data/data/com.viliussutkus89.android.wvware.test/cache/wvWare testResults
 
             adb pull /sdcard/Pictures/screenshots testResults/ || true
 
