@@ -83,6 +83,7 @@ jobs:
           name: maven-local
           path: ~/.m2
           if-no-files-found: error
+          compression-level: 0
           include-hidden-files: true
 
       - name: Artifact conangraph.html
