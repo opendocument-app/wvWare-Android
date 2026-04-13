@@ -13,7 +13,7 @@ Limited to wvHtml.
 
 ### C++ runtime dependency:
 [Using mismatched prebuilt libraries](https://developer.android.com/ndk/guides/common-problems#using_mismatched_prebuilt_libraries) is less problematic if all the libraries used in the application are:
-* Built with the same major version of toolchain - ndk-26
+* Built with the same major version of toolchain - ndk-28
 * Linked against shared C++ STL - `android.defaultConfig.externalNativeBuild.cmake.arguments "-DANDROID_STL=c++_shared"` in app's (and all JNI dependencies) build.gradle.
 
 ### How to install:
