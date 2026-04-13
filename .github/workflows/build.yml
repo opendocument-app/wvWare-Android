@@ -71,14 +71,14 @@ jobs:
       - run: ./gradlew lintRelease publishToMavenLocal
 
       - name: Artifact library-lint-report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: library-lint-report
           path: wvWare/build/reports/lint-results-release.html
           if-no-files-found: error
 
       - name: Artifact maven-local
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: maven-local
           path: ~/.m2
@@ -87,14 +87,14 @@ jobs:
           include-hidden-files: true
 
       - name: Artifact conangraph.html
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: conangraph.html
           path: conangraph.html
           if-no-files-found: error
 
       - name: Artifact dotconan2
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dotconan2
           path: ~/.conan2
@@ -196,7 +196,7 @@ jobs:
 
       - run: python ci-scripts/browser_tests.py --html-dir testResults/wvWare --png-destination-dir testResults/pngs --reference-png-dir test/reference_pngs
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: testResults-${{ matrix.emulator.api_level }}-${{ matrix.emulator.arch }}-${{ matrix.emulator.api_type_target }}
