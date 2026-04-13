@@ -1,0 +1,25 @@
+From 3d71f1679515fda77832907f8c5156c0bbf643cb Mon Sep 17 00:00:00 2001
+From: Andreas Stefl <stefl.andreas@gmail.com>
+Date: Wed, 18 Sep 2024 15:55:44 +0200
+Subject: [PATCH 3/4] format security
+
+---
+ wvRTF.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/wvRTF.c b/wvRTF.c
+index 364d4e0..7253e53 100644
+--- a/wvRTF.c
++++ b/wvRTF.c
+@@ -192,7 +192,7 @@ output_rtfUserData (rtfUserData * ud)
+     rtf_output_char ('{');
+ 
+     /* font color */
+-    rtf_output (rtfColors[ud->cCol]);
++    rtf_output ("%s", rtfColors[ud->cCol]);
+ 
+     /* font face */
+     rtf_output ("\\f%d", ud->cFont);
+-- 
+2.39.3 (Apple Git-146)
+

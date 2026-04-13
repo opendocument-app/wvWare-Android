@@ -77,6 +77,7 @@ jobs:
           conan profile show
 
       - run: conan remote add odr https://artifactory.opendocument.app/artifactory/api/conan/conan
+      - run: conan export .github/conan/recipes/wvware/1.2.9 --version=1.2.9-library
       - run: conan graph info wvWare --profile=android-21-armv8 --build=missing --format=html > conangraph.html
 
       - run: ./gradlew lintRelease publishToMavenLocal

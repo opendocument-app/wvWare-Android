@@ -8,7 +8,7 @@ required_conan_version = ">=2.0.6"
 
 class wvWareConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    requires = "wvware/1.2.9"
+    requires = "wvware/1.2.9-library"
 
     def generate(self):
         deps = CMakeDeps(self)

@@ -1,0 +1,14 @@
+sources:
+  "1.2.9-library":
+    url:
+      - "https://github.com/ViliusSutkus89/OpenSourceMirrors/releases/download/wvWare-1.2.9/wv-1.2.9.tar.gz"
+      - "http://www.nl.abisource.com/downloads/wv/1.2.9/wv-1.2.9.tar.gz"
+    sha256: "4c730d3b325c0785450dd3a043eeb53e1518598c4f41f155558385dd2635c19d"
+patches:
+  "1.2.9-library":
+    - patch_file: "patches/1.2.9-odr/0001-gsf-meta-names.patch"
+    # https://gitweb.gentoo.org/repo/gentoo.git/tree/app-text/wv/files
+    - patch_file: "patches/1.2.9-odr/0002-C99-decls.patch"
+    - patch_file: "patches/1.2.9-odr/0003-format-security.patch"
+    - patch_file: "patches/1.2.9-odr/0004-gcc14-build-fix.patch"
+    - patch_file: "patches/1.2.9-library/wvWare-library.patch"
